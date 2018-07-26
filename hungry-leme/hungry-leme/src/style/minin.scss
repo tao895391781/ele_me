@@ -1,0 +1,46 @@
+$bgc:#fff;
+$blue:#3e90e8;
+$fc:#fff;
+$fc1:#666;
+
+//定义圆角
+@mixin borderRadius ($radius){
+	-webkit-border-radius: $radius;
+    -moz-border-radius: $radius;
+    -ms-border-radius: $radius;
+    -o-border-radius: $radius;
+    border-radius: $radius;
+}
+//父元素弹性布局，固定底部。内容自由拉伸
+@mixin flexLayout($col){
+	display: flex;
+	flex-direction:$col;
+	justify-content:space-around;
+}
+//超出文本省略号
+@mixin textEllip(){
+	text-overflow:ellipsis;
+	overflow: hidden;
+	word-space:nowrap;
+}
+//动画
+@mixin animation($name,$time,$v,$lastState){
+	-webkit-animation: $name $time $v  $lastState;
+    -moz-animation: $name $time $v  $lastState;
+    -ms-animation: $name $time $v  $lastState;
+    -o-animation: $name $time $v  $lastState;
+    animation: $name $time $v  $lastState;
+
+}
+// 定位
+@mixin position($name,$width,$height,$top,$left,$zIndex){
+	position: $name;
+	height:$height;
+	width:$width;
+	top:$top;
+	left:$left;
+	z-index: $zIndex;
+}
+
+
+
