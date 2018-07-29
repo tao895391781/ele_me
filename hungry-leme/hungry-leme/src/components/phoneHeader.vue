@@ -64,6 +64,11 @@
 				}
 				&:nth-child(2){
 				width:20%;
+				text-align:center;
+				span{
+					width:100%;
+				}
+
 				}
 				&:nth-child(3){
 					span{

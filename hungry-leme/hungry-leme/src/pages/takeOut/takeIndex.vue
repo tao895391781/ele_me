@@ -18,9 +18,8 @@
 				<span ref='texts' 
 						:class="{animationT:animationT,animationT1:animationT1}">
 						<i class="iconfont">&#xe632;</i>&nbsp;
-					输入商家、商品名称
-				</span>
-				
+						输入商家、商品名称
+				</span>	
 			</p>
 			<span @click='cancle' v-show='!showS1'>取消</span>
 		</header> 
@@ -31,11 +30,24 @@
 			<div class="searchNav">
 				<span v-for='s in searchNav'>{{s}}</span>
 			</div>
+			<div is='Banner' class="banner"></div>
+			<div class="foodView">
+				<div class="mainContainer" ref='mainContainer'>
+					<ul class="foodTypeNav" ref='foodType1'>
+						<li v-for='f in foodType'>{{f}}左边</li>
+					</ul>
+					<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
+						<li v-for='f in foodType'>{{f}}右边</li>
+					</ul>	
+				</div>
+			</div>
+			
 		</div>
 	</section>
 </template>
 <script>
 import Searchpage from '../../components/search.vue'
+import Banner     from '../../components/banner.vue'
 import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 	export default {
 		data(){
@@ -48,8 +60,8 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				animationT:false,
 				animationT1:false,
 				placeholder:'',
-				searchNav:['炸鸡','披萨','面','满30减10起','烧烤','粥','一点点',]
-
+				searchNav:['炸鸡','披萨','面','满30减10起','烧烤','粥','一点点',],
+				foodType:10,
 			}
 		},
 		methods:{
@@ -67,7 +79,7 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				this.animationT1 = true;
 				this.placeholder = '';
 				this.showS1  = true;
-				this.$bus.emit('openBgc');	
+				this.$bus.emit('openBgc','show');	
 			},
 			search(){
 				this.animation = true;
@@ -77,14 +89,57 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				this.placeholder = '输入商家、商品名称';
 				this.$refs.input.focus();
 				this.showS1  = false;	
-				this.$bus.emit('closeBgc');
+				this.$bus.emit('openBgc','hide');
+			},
+			touchShowFoodType(obj){
+				let pagex1 = 0
+				let pagex2 = 0;
+				let moveL = 0;
+				let pol = 0;
+				obj.addEventListener('touchstart',function(e){
+					pagex1 = event.touches[0].pageX;
+					obj.style.transition = '';
+
+				});
+				obj.addEventListener('touchmove',function(e){
+					let touch = event.targetTouches[0];
+		          	let width = document.body.clientWidth;
+						moveL = (touch.pageX-pagex1);
+						if(moveL>width/3){
+							moveL = width/3;
+						}
+						obj.style.left = moveL + 'px';
+						pol = obj.style.left;
+						obj.style.transition = '';
+						
+				});
+				obj.addEventListener('touchend',function(e){
+					pagex2 = event.changedTouches[0].pageX;
+					//左边没内容回到原点
+					if(parseInt(pol)>0){
+						console.log('左边没了')
+						obj.style.left = 0;
+						obj.style.transition = '.5s all ease';
+					}
+					//左滑
+					
+					
+				});
 			},
 		},
 		created(){
-			getStorage('history1')?this.historyS = getStorage('history1'):'';
+			getStorage('history1') ? this.historyS = getStorage('history1') : '';
+		},
+		mounted(){
+			let this_ = this;
+			let obj = this.$refs.mainContainer;
+			
+			this.touchShowFoodType(obj)
+			
 		},
 		components:{
-			Searchpage
+			Searchpage,
+			Banner
 		},
 	}
 </script>
@@ -209,7 +264,10 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 			@include animation(searchB,.5s,ease,forwards)
 		}
 		.Indexmain{
-			padding-top: 2.6rem;
+			padding-top: 2.7rem;
+			flex:1;
+			overflow-y: scroll;
+			-webkit-overflow-scrolling:touch;
 			.searchNav{
 				overflow: hidden;
 				width:90%;
@@ -219,8 +277,41 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				span{
 					color:#fff;
 				}
-		
 			}
+			.foodView{
+				height:12rem;
+				width:100%;
+				position: relative;
+				overflow: hidden;
+				.mainContainer{
+					background: #fff;
+					width:200%;
+					height:100%;
+					position: absolute;
+					left:0;
+					top:0;
+					overflow: hidden;
+				.foodTypeNav{
+					height:100%;
+					width:50%;
+					display: flex;
+					justify-content:space-around;
+					flex-wrap:wrap;
+					float: left;
+					li{
+						width:20%;
+						height:6rem;
+						line-height: 6em;
+						text-align: center;
+					}
+				}
+				.foodTypeNav1{	
+					
+				}
+
+			}
+			}
+			
 		}
 	}
 	@keyframes searchB {

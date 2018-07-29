@@ -27,7 +27,7 @@
 @import 'src/style/minin.scss';
 	footer{
 		width:100%;
-		height:47px;
+		height:43px;
 		background: $bgc;
 		box-shadow: 0 -1px 2px #eee;
 		ul{
@@ -37,9 +37,12 @@
 			li{
 				color:$fc1;
 				font-size: .5rem;
+				line-height:20px;
 				i{
 					font-size: 1.4rem;
 					color:#666;
+					position:relative;
+					bottom:-3px;
 				}
 			}
 			.active{

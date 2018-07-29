@@ -14,7 +14,9 @@
   },
   "dependencies": {
     "less": "3.7.1",
+    "lodash.assign": "^4.2.0",
     "vue": "^2.5.2",
+    "vue-carousel-3d": "^0.1.23",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
