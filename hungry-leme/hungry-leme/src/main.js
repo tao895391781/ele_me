@@ -6,8 +6,15 @@ import router from './router'
 import './style/minin.scss'
 import './style/reset.scss'
 import bus from 'vue-bus'
+import axios from'axios'
+
+require('./mock.js')
+import Mock from 'mockjs'
+Vue.config.productionTip = false
+axios.defaults.withCredentials = true;
 
 Vue.use(bus)
+Vue.prototype.axios = axios;
 
 
 //全局背景色控制

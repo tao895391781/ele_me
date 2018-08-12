@@ -1,12 +1,12 @@
 <template>
 	<section class="takeIndex">
-		<header>
+		<header :class="{padidngBottom:!animation}">
 			<p class="location">
 				<i class="iconfont">&#xe60c;</i>
 				<span>金兴路2号院</span>
 				<i class="iconfont">&#xe606;</i>	
 			</p>
-			<p 	class="search " @click='search' ref='search' 
+			<p class="search " @click='search' ref='search' 
 				:class="{animation:animation,animation1:animation1}">
 				<b @click='searchs' v-show='!showS1'>搜索</b>
 				<i class="iconfont" v-show='!showS1'>&#xe632;</i>
@@ -27,20 +27,44 @@
 			<Searchpage :historyS='historyS'></Searchpage>	
 		</div>
 		<div class="Indexmain" v-show='showS1'>
-			<div class="searchNav">
+			<div class="searchNav bgc" >
 				<span v-for='s in searchNav'>{{s}}</span>
 			</div>
 			<div is='Banner' class="banner"></div>
-			<div class="foodView">
-				<div class="mainContainer" ref='mainContainer'>
-					<ul class="foodTypeNav" ref='foodType1'>
-						<li v-for='f in foodType'>{{f}}左边</li>
-					</ul>
-					<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
-						<li v-for='f in foodType'>{{f}}右边</li>
-					</ul>	
+			<div class="mainBlock">
+				<div class="foodView">
+					<div class="mainContainer" ref='mainContainer'>
+						<ul class="foodTypeNav foodTypeBgc1" ref='foodType1'>
+							<li v-for='f in foodType1' >
+								<span ref='food1'></span>
+								<i>{{f.name}}</i>
+							</li>
+						</ul>
+						<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
+							<li v-for='f in foodType2'>
+								<span ref='food2'></span>
+								<i>{{f.name}}</i>
+							</li>
+						</ul>	
+					</div>
 				</div>
+				<div class="whichfoodType">
+					<p :class="{ifLeft:!ifRight}"></p>
+					<p :class="{ifLeft:ifRight}"></p>
+				</div>
+				<h4>
+					<span><i class="iconfont">&#xe607;</i></span>
+					<span>加入超级会员</span>
+					<span>&nbsp;·&nbsp;每月领20元红包</span>
+					<span>立即开通<i class="iconfont">&#xe62a;</i></span>
+				</h4>
+				<h5>
+					<span><i class="iconfont">&#xe625;</i></span>
+					<span>饿了么向消费者郑重承诺</span>
+					<span><i class="iconfont">&#xe62a;</i></span>
+				</h5>
 			</div>
+			
 			
 		</div>
 	</section>
@@ -49,6 +73,7 @@
 import Searchpage from '../../components/search.vue'
 import Banner     from '../../components/banner.vue'
 import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
+import {foodType1,foodType2} from '../../data.js'
 	export default {
 		data(){
 			return {
@@ -61,7 +86,10 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				animationT1:false,
 				placeholder:'',
 				searchNav:['炸鸡','披萨','面','满30减10起','烧烤','粥','一点点',],
-				foodType:10,
+				foodType1:foodType1,
+				foodType2:foodType2,
+				ifLeft:true,
+				ifRight:true,
 			}
 		},
 		methods:{
@@ -79,6 +107,7 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				this.animationT1 = true;
 				this.placeholder = '';
 				this.showS1  = true;
+				this.inputText ="";
 				this.$bus.emit('openBgc','show');	
 			},
 			search(){
@@ -92,49 +121,103 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				this.$bus.emit('openBgc','hide');
 			},
 			touchShowFoodType(obj){
+				let this_ = this;
 				let pagex1 = 0
 				let pagex2 = 0;
 				let moveL = 0;
-				let pol = 0;
+				let pol = 0;	
+				let timer = 0;
+				let timeN = 0;
+				let moveTo = 0;
+				let width = document.body.clientWidth;
 				obj.addEventListener('touchstart',function(e){
+					timeN = 0;
 					pagex1 = event.touches[0].pageX;
 					obj.style.transition = '';
+					console.log(obj.style.left)
+					obj.style.left == 0+'px' ? this_.ifLeft = true: this_.ifLeft = false;
+					obj.style.left == -width+'px' ? this_.ifRight = true: this_.ifRight = false;
+					timer = setInterval(function(){
+						timeN++;	
+					},500)
 
 				});
 				obj.addEventListener('touchmove',function(e){
 					let touch = event.targetTouches[0];
-		          	let width = document.body.clientWidth;
+						//滑动实时距离
 						moveL = (touch.pageX-pagex1);
-						if(moveL>width/3){
-							moveL = width/3;
+						if(moveL>width){
+							//滑动距离超过屏幕宽度滑动最大距离大约为宽度的一半
+							moveL = width ;
+								}
+							moveTo = .001 * moveL * moveL;
+						//滑动元素在左侧顶部并且向右滑动
+						if(moveL>0 && this_.ifLeft){
+							//在最左侧向右滑
+							obj.style.left = parseInt(moveTo) + 'px';
+						}else if(moveL>0 && !this_.ifLeft){
+							//在最右侧向右滑
+							obj.style.left = parseInt(moveL-width) + 'px';
+						}else if(moveL<0 && !this_.ifRight){
+							//在最右侧向左滑
+							obj.style.left = parseInt(moveL) + 'px';
+						}else if(moveL<0 && this_.ifRight){
+							obj.style.left =  - parseInt(width+moveTo) + 'px';
 						}
-						obj.style.left = moveL + 'px';
-						pol = obj.style.left;
-						obj.style.transition = '';
 						
 				});
 				obj.addEventListener('touchend',function(e){
 					pagex2 = event.changedTouches[0].pageX;
 					//左边没内容回到原点
-					if(parseInt(pol)>0){
-						console.log('左边没了')
+					clearInterval(timer)
+					if(parseInt(moveL)>0){
 						obj.style.left = 0;
 						obj.style.transition = '.5s all ease';
+					}else{
+						obj.style.left = -width + 'px';
+						obj.style.transition = '.5s all ease';
 					}
-					//左滑
-					
-					
+					obj.style.left == -width+'px' ? this_.ifRight = true: this_.ifRight = false;
+					//左滑	
 				});
 			},
 		},
+		computed:{
+
+		},
 		created(){
 			getStorage('history1') ? this.historyS = getStorage('history1') : '';
+			this.axios.get('takeout/getRushToPurchase')
+			.then(res=>{
+				console.log(res);
+			});
+			this.$bus.$on('delHist',()=>{
+				this.historyS = [];
+			})
 		},
 		mounted(){
 			let this_ = this;
 			let obj = this.$refs.mainContainer;
+			obj.style.left = 0 +'px';
+			this.touchShowFoodType(obj);
+			let food1 = this.$refs.food1;
+			let food2 = this.$refs.food2;
+			food1.forEach((v,index)=>{
+				if(index<5){
+					v.style.backgroundPosition = -67 * index +'px' +' '+0+'px';
+				}else{
+					v.style.backgroundPosition = -67 * (index-5) +'px' +' '+ (-44+'px');
+				}	
+			})
+			food2.forEach((v,index)=>{
+				if(index<5){
+					v.style.backgroundPosition = -66 * index +'px' +' '+(-88+'px');
+				}else{
+					v.style.backgroundPosition = -66 * (index-5) +'px' +' '+ (-137+'px');
+				}
+				
+			})
 			
-			this.touchShowFoodType(obj)
 			
 		},
 		components:{
@@ -159,7 +242,6 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 				line-height: 2.1rem;
 				top:.5rem;
 				right:5%;
-
 			}
 		.location{	
 				color:#fff;
@@ -223,12 +305,8 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 					background: rgba(238, 238, 238, 0.55);
 				}
 				span{
-					position: absolute;
+					@include position(absolute,100%,100%,0,0,1);
 					display: inline-block;
-					width:100%;
-					left:0%;
-					top:0;
-					height:100%;
 					line-height: 2.1rem;
 					color:#999;
 					i{
@@ -253,6 +331,9 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 			:-ms-input-placeholder { color:#999;text-indent:7%; } /* Internet Explorer 10+ */
 			:-moz-placeholder { color:#999;text-indent:7%; } /* firefox 14-18 */	
 		}
+		.padidngBottom{
+			padding-bottom: 2.7rem;
+		}
 		.animationHeader{
 			@include animation(Headers ,0.5s, ease ,forwards);
 		}
@@ -264,56 +345,128 @@ import {setStorage,getStorage} from '../../configJs/fengzhuang.js'
 			@include animation(searchB,.5s,ease,forwards)
 		}
 		.Indexmain{
-			padding-top: 2.7rem;
 			flex:1;
 			overflow-y: scroll;
+			background: #fff;
 			-webkit-overflow-scrolling:touch;
 			.searchNav{
 				overflow: hidden;
-				width:90%;
+				width:100%;
 				margin:0 auto;
 				display: flex;
 				justify-content:space-around;
+				padding:0 5% .5rem;
 				span{
 					color:#fff;
 				}
 			}
-			.foodView{
-				height:12rem;
-				width:100%;
-				position: relative;
-				overflow: hidden;
-				.mainContainer{
-					background: #fff;
-					width:200%;
-					height:100%;
-					position: absolute;
-					left:0;
-					top:0;
+			.mainBlock{
+				background: #fff;
+				.foodView{
+					height:10rem;
+					width:100%;
+					position: relative;
 					overflow: hidden;
-				.foodTypeNav{
-					height:100%;
-					width:50%;
-					display: flex;
-					justify-content:space-around;
-					flex-wrap:wrap;
-					float: left;
-					li{
-						width:20%;
-						height:6rem;
-						line-height: 6em;
-						text-align: center;
+					padding-bottom: 11rem;
+					.mainContainer{
+						background: #fff;
+						@include position(absolute,200%,100%,0,0,1);
+						overflow: hidden;
+					.foodTypeNav{
+						height:100%;
+						width:50%;
+						display: flex;
+						justify-content:space-around;
+						flex-wrap:wrap;
+						float: left;
+						margin:.2rem 0;
+						li{
+							width:20%;
+							height:5rem;
+							text-align: center;
+							padding-top: .6rem;
+							span{
+								display: inline-block;
+								height:2.3rem;
+								width:2.3rem;
+
+								background:#fff url('../../../static/img/foodType.png')  no-repeat;
+							}
+							i{
+								display: inline-block;
+								width:100%;
+								font-size: 1rem;
+								transform:scale(.9);
+										}
+									}
+								}
+							}
+						}
+						.whichfoodType{
+								width:4rem;
+								margin:.5rem auto;
+								height:2px;
+								// background: red;
+								display: flex;
+								justify-content:space-around;
+								p{
+									width:30%;
+									height:2px;
+									background: rgba(213, 213, 213, 0.57);
+								}
+							}	
+							.ifLeft{
+								background: #9e9e9e!important;
+							}
+						h4{
+							background: #f0dba2;
+							height: 2.6rem;
+							line-height: 2.6rem;
+							overflow: hidden;
+							span{
+								float: left;
+								padding:0 .5rem;
+								color: #644f1b;
+								&:first-child{
+
+									i{
+										color: #d6b364;
+										font-size: 1.8rem;
+									}
+								}
+								&:nth-child(2){
+									font-size: 1.1rem;
+								}
+								&:last-child{
+									float: right;
+									font-size: 1rem;
+								}
+							}
+						}
+						h5{
+							background: #fafafa;
+							line-height: 2.6rem;
+							height: 2.6rem;
+							margin:.5rem 0;
+							span{
+								float: left;
+								padding:0 .5rem;
+								font-size: 1.07rem;
+								color: #0a0a0a;
+								&:first-child{
+									i{
+										color: #008aff;
+									}
+									
+								}
+								&:last-child{
+									float: right;
+								}
+							}
+						}
 					}
 				}
-				.foodTypeNav1{	
-					
-				}
-
 			}
-			}
-			
-		}
-	}
 	@keyframes searchB {
 		from{
 			margin-top: 2rem;

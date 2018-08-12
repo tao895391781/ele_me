@@ -34,6 +34,11 @@
 		}
 
 	},
+	computed:{
+		ifIndex(){
+			return this.$route.name == 'takeout' ? true : false;
+		},
+	},
 	created(){
 		this.time = Date.parse(new Date());
 
@@ -48,6 +53,7 @@
 		height:1.3rem;
 		div{
 			height:100%;
+			height:1.3rem;
 			p{
 				font-size: .5rem;
 				float: left;

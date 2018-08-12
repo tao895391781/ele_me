@@ -44,11 +44,12 @@ import {setStorage,getStorage,delStorage} from '../configJs/fengzhuang.js'
 			},
 		},
 		created(){
-
 			getStorage('history1')?this.history1 = getStorage('history1'):this.history1 = [];
 			this.$bus.$on('del',()=>{
 				delStorage('history1');
-				this.history1 = []
+				console.log(getStorage('history1'))
+				this.history1 = [];
+				this.$bus.$emit('delHist')
 			})
 		},
 	}

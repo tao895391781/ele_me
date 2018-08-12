@@ -3,7 +3,7 @@
 		<ul ref='containerImg'>
 			<li v-for='(m,index) in imgs' :indexs='index' ref='oli'><img :src="m" alt=""></li>
 		</ul>
-		<p class="whichI">
+		<p class="whichI" v-show='imgs.length!=1'>
 			<span v-for='(i,index) in imgs' :class="{active:index==m}"></span>
 		</p>
 	</section>
@@ -22,10 +22,9 @@
 			}
 		},
 		methods:{
-			downs(){
+			downs(w){
 				this.m++
 				let oli  = this.$refs.oli
-				let w = document.body.clientWidth;
 					for(let i = 0;i<oli.length;i++){
 							oli[i].style.left = w * (i-this.m) + 'px';
 							oli[i].style.transition = 'all .7s ease'
@@ -37,10 +36,9 @@
 						}
 					}
 			},
-			ups(){
+			ups(w){
 				this.m--
 				let oli  = this.$refs.oli
-				let w = document.body.clientWidth;
 					for(let i = 0;i<oli.length;i++){
 						oli[i].style.left = w * (i-this.m) + 'px';
 						oli[i].style.transition = 'all .7s ease';
@@ -52,12 +50,16 @@
 						}	
 					}
 				},
+			moves(){
+
 				//做定时器自动滑动
-				setTimeouts(){
-					this.timer = setTimeout(function(){
-						this.downs();
-						this.setTimeouts();
-					}.bind(this),3000)
+			},
+			setTimeouts(){
+				let width = document.body.clientWidth;
+				this.timer = setTimeout(function(){
+					this.downs(width);
+					this.setTimeouts();
+				}.bind(this),3000)
 				},
 			},
 		created(){
@@ -77,18 +79,37 @@
 					}
       			});
 			 this.$refs.containerImg.addEventListener('touchstart',(e)=>{
-			 		this_.X1 = event.touches[0].pageX;
+			 		this.X1 = event.touches[0].pageX;
+			 		console.log(this)
+			 		clearTimeout(this.timer)
+
 			 });
+			 /* this.$refs.containerImg.addEventListener('touchmove',(e)=>{
+			 		// clearTimeout(this.timer)
+			 		let touch = event.targetTouches[0];
+						//滑动实时距离
+					let moveL = (touch.pageX-this.X1);
+					console.log(moveL);
+					if(moveL < 0){
+						//左滑
+						
+
+					}
+
+
+			 });*/
 			  this.$refs.containerImg.addEventListener('touchend',(e)=>{
 			  		// clearTimeout(this_.timer)
-			  		console.log(this_.m)
-			 		this_.X2= event.changedTouches[0].pageX;
-			 		if(this_.X1-this_.X2>3){
+			  		this.setTimeouts();
+			  		console.log(this.m)
+			 		this.X2= event.changedTouches[0].pageX;
+			 		let width = document.body.clientWidth;
+			 		if(this.X1-this.X2>3){
 			 			//左滑
-			 			this_.downs()
-			 		}else if(this_.X2-this_.X1>3){
+			 			this.downs(width)
+			 		}else if(this.X2-this.X1>3){
 			 			//右滑
-			 			this_.ups()
+			 			this.ups(width)
 			 		}
 			 })
 		},
@@ -99,12 +120,11 @@
 
 #banner{
 	width:100%;
-	height: 9rem;
+	height: 13rem;
 	background: #fff;
-	margin-top: .5rem;
 	ul{	
 		width:100%;
-		height:7rem;
+		height:10rem;
 		overflow: hidden;
 		position: relative;
 		z-index: 1000;

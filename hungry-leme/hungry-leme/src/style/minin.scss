@@ -35,8 +35,8 @@ $fc1:#666;
 // 定位
 @mixin position($name,$width,$height,$top,$left,$zIndex){
 	position: $name;
-	height:$height;
 	width:$width;
+	height:$height;
 	top:$top;
 	left:$left;
 	z-index: $zIndex;
