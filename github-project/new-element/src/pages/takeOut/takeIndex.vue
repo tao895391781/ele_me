@@ -145,7 +145,7 @@ import {foodType1,foodType2} from '../../data.js'
 					let q = this.$refs.fivetype;
 					for(let i = 0;i<q.length;i++){
 						q[i].style.backgroundImage = `url(${imgs[i]})`;
-						console.log(q[i].style)
+						// console.log(q[i].style)
 					}
 				})
 
@@ -167,6 +167,7 @@ import {foodType1,foodType2} from '../../data.js'
 				this.$bus.emit('openBgc','show');	
 			},
 			search(){
+				console.log('切换')
 				this.animation = true;
 				this.animation1 = false;
 				this.animationT = true;
@@ -253,9 +254,21 @@ import {foodType1,foodType2} from '../../data.js'
 				})
 			},
 		},
+		watch:{
+			'businessInfos':{
+				deep:true,
+				handler:function(newValue){
+				console.log(newValue)
+				this.$bus.emit('bscroll')
+				}
+				
+				
+			},
+		},
 		computed:{
 		},
 		created(){
+			console.log(this.Bscroll)
 			getStorage('history1') ? this.historyS = getStorage('history1') : '';
 			//获取首页店铺信息上面的推荐食品
 			this.axios.get(this.apilist.getRushToPurchase)
@@ -278,9 +291,6 @@ import {foodType1,foodType2} from '../../data.js'
 					console.log(res.data);
 					this.businessInfos = res.data;
 				})
-		},
-		watch:{
-
 		},
 		mounted(){
 			let this_ = this;
@@ -316,11 +326,10 @@ import {foodType1,foodType2} from '../../data.js'
 @import 'src/style/minin.scss';
 	.takeIndex{
 		width:100%;
-		flex:1;
 		display: flex;
 		display:-webkit-flex;
 		flex-direction:column;
-		@include scroll();
+		// @include scroll();
 		header{
 			position: relative;
 			&>:last-child{

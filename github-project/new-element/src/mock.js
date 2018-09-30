@@ -2,7 +2,6 @@ const Mocks = require('mockjs');
 
 // import {data} from './data.js'
 const Mock = Mocks;
-console.log(Mocks)
 const Random = Mocks.Random;
 const imgs = [require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/8.jpg'),require('../static/img/9.jpg'),require('../static/img/10.jpg'),('../static/img/11.jpg'),('../static/img/12.jpg'),('../static/img/13.jpg'),('../static/img/14.jpg')]
 const rushToPurchase =  [

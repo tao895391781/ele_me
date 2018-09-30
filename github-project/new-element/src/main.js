@@ -7,6 +7,8 @@ import './style/minin.scss'
 import './style/reset.scss'
 import bus from 'vue-bus'
 import axios from'axios'
+//全局引入better-scroll
+import Bscroll from 'better-scroll'
 
 require('./mock.js')
 import apilist from './api/apiList'
@@ -16,6 +18,13 @@ axios.defaults.withCredentials = true;
 Vue.use(bus)
 Vue.prototype.axios = axios;
 Vue.prototype.apilist = apilist;
+Vue.prototype.Bscroll = Bscroll;
+
+function initScroll(ele){
+  console.log(this.Bscroll)
+  return new this.Bscroll(ele,{click:true,disableTouch:false})
+};
+Vue.prototype.initScroll = initScroll;
 
 
 

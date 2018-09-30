@@ -1,8 +1,10 @@
 <template>
 	<section id="index" :class='{bgc:bgc,bgcs:!bgc}'>
 		<phoneHeader :headerPhoneC='headerPhoneC'></phoneHeader>
-		<router-view></router-view>
-		<div class='blank' v-show='showBlank'></div>
+		<div class="routerView" v-if='!showBlank' ref='wrapper'>
+			<router-view></router-view>
+		</div>
+		<div class='blank' v-if='showBlank'></div>
 		<div is='Footer' v-show='showFooter' :class="{footerAnimation:showFooter}"></div>
 	</section>
 </template>
@@ -44,6 +46,14 @@ import phoneHeader from '../components/phoneHeader.vue'
 				}		
 			});	
 		},
+		mounted(){
+			let ele = this.$refs.wrapper;
+			this.$bus.$on('bscroll',function(){
+				let bscroll = this.initScroll(ele)
+				console.log(bscroll)
+			});
+			
+		},
 	}
 </script>
 
@@ -62,6 +72,10 @@ import phoneHeader from '../components/phoneHeader.vue'
 	height:100%;
 	@include flexLayout(column);
 
+}
+.routerView{
+	flex:1;
+	overflow: hidden;
 }
 .blank{
 	flex:1;
