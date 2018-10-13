@@ -80,7 +80,7 @@
       			});
 			 this.$refs.containerImg.addEventListener('touchstart',(e)=>{
 			 		this.X1 = event.touches[0].pageX;
-			 		console.log(this)
+			 		// console.log(this)
 			 		clearTimeout(this.timer)
 
 			 });
@@ -101,7 +101,7 @@
 			  this.$refs.containerImg.addEventListener('touchend',(e)=>{
 			  		// clearTimeout(this_.timer)
 			  		this.setTimeouts();
-			  		console.log(this.m)
+			  		// console.log(this.m)
 			 		this.X2= event.changedTouches[0].pageX;
 			 		let width = document.body.clientWidth;
 			 		if(this.X1-this.X2>3){

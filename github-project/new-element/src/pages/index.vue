@@ -1,7 +1,7 @@
 <template>
 	<section id="index" :class='{bgc:bgc,bgcs:!bgc}'>
 		<phoneHeader :headerPhoneC='headerPhoneC'></phoneHeader>
-		<div class="routerView" v-if='!showBlank' ref='wrapper'>
+		<div class="routerView" v-if='!showBlank'>
 			<router-view></router-view>
 		</div>
 		<div class='blank' v-if='showBlank'></div>
@@ -11,6 +11,7 @@
 <script>
 import Footer from '../components/footer.vue'
 import phoneHeader from '../components/phoneHeader.vue'
+
 	export default{
 		data(){
 			return {
@@ -22,6 +23,8 @@ import phoneHeader from '../components/phoneHeader.vue'
 		components:{
 			Footer,
 			phoneHeader
+		},
+		methods:{
 		},
 		computed:{
 			showBlank(){
@@ -47,12 +50,6 @@ import phoneHeader from '../components/phoneHeader.vue'
 			});	
 		},
 		mounted(){
-			let ele = this.$refs.wrapper;
-			this.$bus.$on('bscroll',function(){
-				let bscroll = this.initScroll(ele)
-				console.log(bscroll)
-			});
-			
 		},
 	}
 </script>

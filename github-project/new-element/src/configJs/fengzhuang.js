@@ -32,13 +32,13 @@ export const scrollRequest = (element,ifhasBottomNav,callbacks)=>{
 			if(docHeight>Eletop){
 				callbacks();
 			}	
-		}
-		
+		}		
 	}
-
-	
-	
-
-	
-
+}
+//下拉刷新
+export const pullingDown = (bscroll,fn)=>{
+	bscroll.on('pullingDown',function(){
+		fn();
+		bscroll.finishPullDown()
+	});
 }

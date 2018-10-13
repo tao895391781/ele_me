@@ -1,125 +1,141 @@
 <template>
-	<section class="takeIndex" ref="takeIndex">
-		<header :class="{padidngBottom:!animation}">
-			<p class="location">
-				<i class="iconfont">&#xe60c;</i>
-				<span>金兴路2号院</span>
-				<i class="iconfont">&#xe606;</i>	
-			</p>
-			<p class="search " @click='search' ref='search' 
-				:class="{animation:animation,animation1:animation1,fixedSearch:fixedSearch}">
-				<b @click='searchs' v-show='!showS1'>搜索</b>
-				<i class="iconfont" v-show='!showS1'>&#xe632;</i>
-				<input 	type="text" 
-						ref="input"
-						:class="{bgChange:!showS1}" 
-						:placeholder='placeholder'
-						v-model="inputText" >
-				<span ref='texts' 
-						:class="{animationT:animationT,animationT1:animationT1}">
-						<i class="iconfont">&#xe632;</i>&nbsp;
-						输入商家、商品名称
-				</span>	
-			</p>
-			<span @click='cancle' v-show='!showS1'>取消</span>
-		</header> 
-		<div class="searchpage" v-show='!showS1' :class="{searchB:!showS1}">
-			<Searchpage :historyS='historyS'></Searchpage>	
-		</div>
-		<div class="Indexmain" v-show='showS1'>
-			<div class="searchNav bgc" >
-				<span v-for='s in searchNav'>{{s}}</span>
+	<div ref='wrappers' class="indexBox">
+		<section class="takeIndex" ref="takeIndex">
+			<header :class="{padidngBottom:!animation}">
+				<p class="location">
+					<i class="iconfont">&#xe60c;</i>
+					<span>金兴路2号院</span>
+					<i class="iconfont">&#xe606;</i>	
+				</p>
+				<p class="search " @click='search' ref='search'
+					:class="{animation:animation,animation1:animation1,fixedSearch:fixedSearch}">
+					<b @click='searchs' v-show='!showS1'>搜索</b>
+					<i class="iconfont" v-show='!showS1'>&#xe632;</i>
+					<input 	type="text" 
+							ref="input"
+							:class="{bgChange:!showS1}" 
+							:placeholder='placeholder'
+							v-model="inputText" 
+						>
+					
+					<span ref='texts' 
+							:class="{animationT:animationT,animationT1:animationT1}">
+							<i class="iconfont">&#xe632;</i>&nbsp;
+							输入商家、商品名称
+					</span>	
+				</p>
+				<span @click='cancle' v-show='!showS1'>取消</span>
+			</header> 
+			<div class="searchpage" v-show='!showS1' :class="{searchB:!showS1}">
+				<Searchpage :historyS='historyS'></Searchpage>	
 			</div>
-			<div is='Banner' class="banner"></div>
-			<div class="mainBlock">
-				<div class="foodView">
-					<div class="mainContainer" ref='mainContainer'>
-						<ul class="foodTypeNav foodTypeBgc1" ref='foodType1'>
-							<li v-for='f in foodType1' >
-								<span ref='food1'></span>
-								<i>{{f.name}}</i>
-							</li>
-						</ul>
-						<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
-							<li v-for='f in foodType2'>
-								<span ref='food2'></span>
-								<i>{{f.name}}</i>
-							</li>
-						</ul>	
+			<div class="Indexmain" v-show='showS1'>
+				<div class="searchNav bgc" >
+					<span v-for='s in searchNav'>{{s}}</span>
+				</div>
+				<div is='Banner' class="banner"></div>
+				<div class="mainBlock">
+					<div class="foodView">
+						<div class="mainContainer" ref='mainContainer'>
+							<ul class="foodTypeNav foodTypeBgc1" ref='foodType1'>
+								<li v-for='f in foodType1' >
+									<span ref='food1'></span>
+									<i>{{f.name}}</i>
+								</li>
+							</ul>
+							<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
+								<li v-for='f in foodType2'>
+									<span ref='food2'></span>
+									<i>{{f.name}}</i>
+								</li>
+							</ul>	
+						</div>
 					</div>
-				</div>
-				<div class="whichfoodType">
-					<p :class="{ifLeft:!ifRight}"></p>
-					<p :class="{ifLeft:ifRight}"></p>
-				</div>
-				<h4>
-					<span><i class="iconfont">&#xe607;</i></span>
-					<span>加入超级会员</span>
-					<span>&nbsp;·&nbsp;每月领20元红包</span>
-					<span>立即开通<i class="iconfont">&#xe62a;</i></span>
-				</h4>
-				<h5>
-					<span><i class="iconfont">&#xe625;</i></span>
-					<span>饿了么向消费者郑重承诺</span>
-					<span><i class="iconfont">&#xe62a;</i></span>
-				</h5>
-				<div class="fivetype">
-					<div v-for='f in fivetypeData' :class="{beforeTwo:false}" ref='fivetype'>
-						<h5>{{f.descript}}</h5>
-						<p>{{f.name}} ></p>
-						<p>{{f.rush}}</p>
-					</div>	
-				</div>
-				<div class="commendBusiness" ref='business'>
-					<h3>推荐商家</h3>
-					<nav>
-						<ul>
-							<li>综合排序</li>
-							<li>距离最近</li>
-							<li>品质联盟</li>
-							<li>筛选</li>
+					<div class="whichfoodType">
+						<p :class="{ifLeft:!ifRight}"></p>
+						<p :class="{ifLeft:ifRight}"></p>
+					</div>
+					<h4>
+						<span><i class="iconfont">&#xe607;</i></span>
+						<span>加入超级会员</span>
+						<span>&nbsp;·&nbsp;每月领20元红包</span>
+						<span>立即开通<i class="iconfont">&#xe62a;</i></span>
+					</h4>
+					<h5>
+						<span><i class="iconfont">&#xe625;</i></span>
+						<span>饿了么向消费者郑重承诺</span>
+						<span><i class="iconfont">&#xe62a;</i></span>
+					</h5>
+					<div class="fivetype">
+						<div v-for='f in fivetypeData' :class="{beforeTwo:false}" ref='fivetype'>
+							<h5>{{f.descript}}</h5>
+							<p>{{f.name}} ></p>
+							<p>{{f.rush}}</p>
+						</div>	
+					</div>
+					<div class="commendBusiness" ref='business'>
+						<h3>推荐商家</h3>
+						<nav>
+							<ul>
+								<li>综合排序</li>
+								<li>距离最近</li>
+								<li>品质联盟</li>
+								<li>筛选</li>
+							</ul>
+						</nav>
+						<ul class="busiInfo">
+							<li v-for='store in businessInfos'>
+								<div class="left">
+									<img :src="store.img" alt="loading" srcset="">
+								</div>
+								<div class="left">
+									<h3 class="ellipsis">{{store.name}}({{store.address}})</h3>
+									<p>
+										<span class="left"><i class="iconfont">&#xe60b;</i>&nbsp;{{store.start}}</span>
+										<span class="left">月售{{store.mouthSale}}</span>
+										<!-- <span class="left">人均{{store.averageUsed}}</span> -->
+										<span class='right paddingO send'>{{store.whickSend}}</span>
+										<span class='right paddingO'>{{store.ifonTime}}</span>
+									</p>
+									<p>
+										<span class="left noColor">起送￥{{store.startSend}}</span>
+										<span class="left">配送￥{{store.sendTip}}</span>
+										<span class="right">{{store.distance}}km</span>
+										<span class="right">{{store.arriveTime}}分钟</span>	
+									</p>
+									<p>
+										<span></span>
+									</p>
+								</div>
+							</li>
 						</ul>
-					</nav>
-					<ul class="busiInfo">
-						<li v-for='store in businessInfos'>
-							<div class="left">
-								<img :src="store.img" alt="loading" srcset="">
-							</div>
-							<div class="left">
-								<h3 class="ellipsis">{{store.name}}({{store.address}})</h3>
-								<p>
-									<span class="left"><i class="iconfont">&#xe60b;</i>&nbsp;{{store.start}}</span>
-									<span class="left">月售{{store.mouthSale}}</span>
-									<!-- <span class="left">人均{{store.averageUsed}}</span> -->
-									<span class='right paddingO send'>{{store.whickSend}}</span>
-									<span class='right paddingO'>{{store.ifonTime}}</span>
-								</p>
-								<p>
-									<span class="left noColor">起送￥{{store.startSend}}</span>
-									<span class="left">配送￥{{store.sendTip}}</span>
-									<span class="right">{{store.distance}}km</span>
-									<span class="right">{{store.arriveTime}}分钟</span>	
-								</p>
-								<p>
-									<span></span>
-								</p>
-							</div>
-						</li>
-					</ul>
-				</div>
-			</div>	
+					</div>
+				</div>	
+			</div>
+		</section>
+		<div v-if='ifOverscroll' 
+			class='fixOverscroll'
+		 	:class="{overScrollFixed:ifOverscroll}">
+			<p @click='search'>
+				<i class="iconfont">&#xe632;</i>&nbsp;
+				输入商家、商品名称
+			</p>
+						
 		</div>
-	</section>
+	</div>
 </template>
+
 <script>
 import Searchpage from '../../components/search.vue'
 import Banner     from '../../components/banner.vue'
 import {setStorage,getStorage,scrollRequest} from '../../configJs/fengzhuang.js'
 import {foodType1,foodType2} from '../../data.js'
+import {mapActions} from 'vuex'
 	export default {
 		data(){
 			return {
 				showS1:true,
+				disabled:true,
 				inputText:'',
 				historyS:[],
 				animation:false,
@@ -134,7 +150,11 @@ import {foodType1,foodType2} from '../../data.js'
 				ifRight:true,
 				fivetypeData:[],
 				fixedSearch:false,
-				businessInfos:[],
+				Bscrolls:{},
+				index:8,
+				ifOverscroll:false,
+				scrollL:0,
+				recordFlag:false,
 			}
 		},
 		methods:{
@@ -145,37 +165,55 @@ import {foodType1,foodType2} from '../../data.js'
 					let q = this.$refs.fivetype;
 					for(let i = 0;i<q.length;i++){
 						q[i].style.backgroundImage = `url(${imgs[i]})`;
-						// console.log(q[i].style)
 					}
 				})
-
 			},
-			searchs(){	
-			this.inputText == ''?this.$bus.$emit('tip','为空'):this.historyS.unshift(this.inputText);
+			searchs(){
+				let options = {
+					message:'搜索内容不能为空',
+					duration:1000
+				}
+			this.inputText == ''?this.Message.error(options):this.historyS.unshift(this.inputText);
+			//解决点击弹出框不自动消失问题
+			setTimeout(function(){
+				this.Message.closeAll()
+			}.bind(this),1000)
 			if(this.historyS.length>8){
 				this.historyS.splice(8,1);
 				}	
 			},
 			cancle(){
+				console.log(this.scrollL)
 				this.animation = false;
 				this.animation1 = true;
 				this.animationT = false;
 				this.animationT1 = true;
 				this.placeholder = '';
 				this.showS1  = true;
-				this.inputText ="";
+				this.recordFlag?this.ifOverscroll = true:this.ifOverscroll = false;
+				this.inputText = "";
+				this.disabled = true;
+				this.$refs.input.blur();
 				this.$bus.emit('openBgc','show');	
+				 this.$nextTick(()=>{
+						this.Bscrolls.refresh(); 
+						 this.Bscrolls.scrollTo(0,-this.scrollL);
+					 })
 			},
 			search(){
-				console.log('切换')
 				this.animation = true;
 				this.animation1 = false;
 				this.animationT = true;
 				this.animationT1 = false;
+				this.ifOverscroll = false;
 				this.placeholder = '输入商家、商品名称';
 				this.$refs.input.focus();
 				this.showS1  = false;	
 				this.$bus.emit('openBgc','hide');
+				// this.Bscrolls.scrollTo(0,1);
+				 this.$nextTick(()=>{
+						// this.Bscrolls.refresh(); 
+					 })
 			},
 			touchShowFoodType(obj){
 				let this_ = this;
@@ -191,7 +229,6 @@ import {foodType1,foodType2} from '../../data.js'
 					timeN = 0;
 					pagex1 = event.touches[0].pageX;
 					obj.style.transition = '';
-					console.log(obj.style.left)
 					obj.style.left == 0+'px' ? this_.ifLeft = true: this_.ifLeft = false;
 					obj.style.left == -width+'px' ? this_.ifRight = true: this_.ifRight = false;
 					timer = setInterval(function(){
@@ -241,6 +278,7 @@ import {foodType1,foodType2} from '../../data.js'
 			searchScroll(){
 				//首页滚动固定搜索框
 				let takeIndexTop = this.$refs.takeIndex.scrollTop;
+				console.log(takeIndexTop)
 				if(takeIndexTop  >parseInt(2.6 * 14)){
 					this.fixedSearch = true;
 				}else{
@@ -248,27 +286,54 @@ import {foodType1,foodType2} from '../../data.js'
 				}
 			},
 			getBusinessInfo(){
-				this.axios.get('takeout/getBusinessInformation')
+				this.axios.get('takeout/getBusinessInformation'+'/all')
 				.then(res=>{
-					console.log(res.data);
+					console.log(res.data)
+					this.businessInfos = res.data;	
 				})
 			},
+			getLoadDataBusinessInfo(){
+				this.axios.get('takeout/getBusinessInformation'+'/load')
+				.then(res=>{
+					this.businessInfos = [...this.businessInfos,...res.data];
+					console.log(this.businessInfos)
+				})
+			},
+			getEle(){
+				return this.$refs.wrappers;
+			},
+			sliceData(arr){
+				if(arr.length == 0){
+					return false;
+				}
+				return arr.slice(0,8);
+			},
+			...mapActions({
+				getIndexBusinessData:'getIndexBusinessData',
+			}),
 		},
 		watch:{
 			'businessInfos':{
 				deep:true,
-				handler:function(newValue){
-				console.log(newValue)
-				this.$bus.emit('bscroll')
-				}
-				
-				
+				handler:function(newValue,oldValue){
+					console.log(newValue);
+					 this.$nextTick(()=>{
+						this.Bscrolls.refresh(); 
+					 })
+					
+				}	
 			},
 		},
 		computed:{
+			businessInfos(){
+				return this.$store.state.indexBusinessData;
+			},
+			businessAllInfos(){
+				return this.$store.state.indexBusinessData;
+			},
 		},
 		created(){
-			console.log(this.Bscroll)
+			console.log(this.Message)
 			getStorage('history1') ? this.historyS = getStorage('history1') : '';
 			//获取首页店铺信息上面的推荐食品
 			this.axios.get(this.apilist.getRushToPurchase)
@@ -280,17 +345,16 @@ import {foodType1,foodType2} from '../../data.js'
 					imgs.push(v.img)
 				})
 				this.gengxinDom(imgs);
-
 			});
 			this.$bus.$on('delHist',()=>{
 				this.historyS = [];
+				 this.Message.success({
+         			message:'已清空',
+					duration:1000
+      })
 			})
 			//获取商家店铺
-			this.axios.get(this.apilist.getBusinessInformation)
-				.then(res=>{
-					console.log(res.data);
-					this.businessInfos = res.data;
-				})
+			this.getIndexBusinessData({urlargs:'all',index:this.index,firstLoad:true});
 		},
 		mounted(){
 			let this_ = this;
@@ -314,7 +378,62 @@ import {foodType1,foodType2} from '../../data.js'
 				}
 				
 			});
-			this.$refs.takeIndex.addEventListener('scroll',this.searchScroll,true);
+			 this.$nextTick(()=>{
+				console.log('初始化scroll')
+				let obj = {
+					click:true,
+					disableTouch:false,
+					//下拉刷新
+					pullDownRefresh: {
+						threshold: 50,
+						stop: 50
+						},
+					//上拉加载
+					pullUpLoad: {
+						threshold: 50
+							}
+						};
+			this.Bscrolls =  new this.Bscroll(this.getEle(),obj);
+			console.log(this.Bscrolls)
+			let that = this;
+			this.Bscrolls.on('pullingDown',function(){
+
+					console.log('下拉刷新');
+					that.getIndexBusinessData({
+						urlargs:'all',
+						index:that.index,
+						bsc: that.Bscrolls,
+						ifupPullLoad:false,
+						self:that,
+						});
+					// that.Bscrolls.finishPullDown()
+				});
+			this.Bscrolls.on('pullingUp',function(){
+					console.log('上拉加载');
+					that.index += 8;
+					that.getIndexBusinessData({
+						urlargs:'all',
+						index:that.index,
+						bsc: that.Bscrolls,
+						ifupPullLoad:true,
+						self:that
+						});
+					// that.Bscrolls.finishPullUp();
+					});
+			let searchOffsetTop = this.$refs.search.offsetTop;
+			this.Bscrolls.on('scroll',function(pos){
+				that.$bus.emit('downReFresh',pos.y)
+				that.scrollL = -pos.y;
+				if(-pos.y>searchOffsetTop){
+					that.ifOverscroll = true;
+					that.recordFlag = true;
+				}else{
+					that.ifOverscroll = false;
+					that.recordFlag = false;
+				}
+			})
+   		 });
+			
 		},
 		components:{
 			Searchpage,
@@ -324,6 +443,34 @@ import {foodType1,foodType2} from '../../data.js'
 </script>
 <style lang="scss">
 @import 'src/style/minin.scss';
+.indexBox{
+	width:100%;
+	height:100%;
+	overflow: hidden;
+	position: relative;
+}
+	.fixOverscroll{
+		position: static;
+		top:0;
+		left:0;
+		width:100%;
+		height:2.5rem;
+		background:#fff;
+		text-align: center;
+		line-height: 2.1rem;
+		@include borderRadius(2px);
+		p{
+			width:90%;
+			text-align: center;
+			margin: .2rem auto .2rem;
+			background: #f1f1f1;
+			color:#6e6e6e;
+			@include borderRadius(20px);
+		}
+	}
+	.overScrollFixed{
+		position: absolute;
+	}
 	.takeIndex{
 		width:100%;
 		display: flex;

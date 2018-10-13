@@ -6,7 +6,7 @@
 				<span>中国电信</span>
 				<span><i class="iconfont">&#xe656;</i></span>
 			</p>
-			<p><span>{{getNowTime(time)}}</span></p>
+			<p><span>{{time}}</span></p>
 			<p>
 				<span><i class="iconfont">&#xe688;</i></span>
 				<span><i class="iconfont">&#xe697;</i></span>
@@ -20,7 +20,8 @@
 	export default{
 		data(){
 			return {
-				time:0,
+				time:'',
+				
 				
 		}
 	},
@@ -31,7 +32,19 @@
 			let h = d.getHours();
 			let m = d.getMinutes();
 			return (h<10?'0'+h:h)+':'+(m<10?'0'+m:m)
-		}
+		},
+		setTime(){
+			let that = this;
+			setTimeout(() => {
+			let time = Date.parse(new Date());
+			that.time = that.getNowTime(time);
+			that.setTime();
+			}, 60000);
+		},
+		times(){
+			let time = Date.parse(new Date());
+			this.time = this.getNowTime(time);
+		},
 
 	},
 	computed:{
@@ -40,9 +53,8 @@
 		},
 	},
 	created(){
-		this.time = Date.parse(new Date());
-
-
+		this.times()
+		this.setTime();
 	},
 
 	}
@@ -50,16 +62,16 @@
 <style lang="scss">
 	#phoneHeader{
 		width:100%;
-		height:1.3rem;
+		height:25px;
 		div{
 			height:100%;
-			height:1.3rem;
+			height:100%;
 			p{
 				font-size: .5rem;
 				float: left;
 				width:40%;
 				height:100%;
-				line-height: 1.3rem;
+				line-height: 25px;
 				span{
 					color:#fff;
 					float: left;

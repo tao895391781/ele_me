@@ -1,9 +1,12 @@
 <template>
   <div id="app">
-    <!-- 顶部提示语句 -->
-    <div class="tips" v-show='showTips' :class="{animationTips:showTips}">
-        <i class="iconfont">&#xe61c;</i>
-        {{text}}
+    <!-- 下拉刷新tips -->
+    <div class="downRefresh" ref='downRes' v-show='showRefresh'>
+      <i class="iconfont" ref='iconH'>&#xe61f;</i>
+      <span v-show='showRefreshText'>刷新成功</span>
+    </div>
+    <div class="bottomLoad" v-show='showBottomLoad'>
+      <i class="iconfont">&#xe652;</i>
     </div>
     <!-- 中间提示语句 -->
     <div class="mainShadow" v-if='showmainShadow'>
@@ -30,6 +33,9 @@ export default {
       rightT:'确定',
       showmainShadow:false,
       showText1:false,
+      showRefresh:false,
+      showRefreshText:false,
+      showBottomLoad:false,
     }
   },
   methods:{
@@ -44,14 +50,6 @@ export default {
     },
   },
   created(){
-    //顶部提示
-    this.$bus.$on('tip',(text)=>{ 
-        this.showTips = true;
-        this.text = text;
-        setTimeout(function(){
-            this.showTips = false;
-        }.bind(this),2000)
-    });
     //中间提示
     this.$bus.$on('tip1',(text1,leftT,rightT)=>{
       this.showmainShadow = true;
@@ -60,6 +58,35 @@ export default {
       this.text1 = text1;
       this.leftT = leftT;
       this.rightT = rightT;
+
+    })
+  },
+  mounted(){   
+    let this_ = this;
+    console.log(this.$bus)
+    this.$bus.$on('successRefrewsh',()=>{
+      this.showRefreshText = true;
+     
+      setTimeout(()=>{
+        this_.showRefreshText = false;
+      },500)
+    });
+     this.$bus.$on('hiddenText',()=>{
+      this.showRefreshText = false;
+    });
+    this.$bus.$on('downReFresh',(topV)=>{
+      if(topV>30){
+          this.showRefresh = true
+          this.$refs.downRes.style.top = topV + 'px';
+      }else{
+        this_.showRefresh = false;
+      }
+    });
+    this.$bus.$on('upPullLoad',()=>{
+      this_.showBottomLoad = true;  
+      setTimeout(()=>{
+        this_.showBottomLoad = false;
+      },500)
     })
   },
 }
@@ -69,12 +96,12 @@ export default {
 @import 'src/style/minin.scss';
  @keyframes tips{
     from{
-      top:-10%;
-      opacity: .7;
+    -webkit-transform: rotate(0);
+    transform: rotate(0);
     }
     to{
-      top:.5rem;
-      opacity: 1;
+      -webkit-transform: rotate(36000deg);
+      transform: rotate(36000deg);
     }
  }
  @keyframes tips1{
@@ -95,6 +122,39 @@ export default {
   color: #2c3e50;
   width:100%;
   height:100%;
+  //下拉刷新
+  .downRefresh{
+    position: fixed;
+    top:0rem;
+    left:0;
+    width:100%;
+    height:1.5rem;
+    text-align: center;
+    color: #fff;
+    span{
+      color: #fff;
+    }
+    i{
+      color:#FFF;
+      font-size: 20px;
+      display: block;
+      @include animation(tips,100s,linear,infinite);
+     
+    } 
+  } 
+  .bottomLoad{
+    width: 100%;
+    position:fixed;
+    bottom: 50px;
+    left:0;
+    text-align: center;
+    i{
+      color: #fff;
+      font-size: 20px;
+      display: block;
+      @include animation(tips,200s,linear,infinite);
+    }
+  }
   /*全局提示*/
   .tips{
     padding: .2rem 2rem;

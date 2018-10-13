@@ -42,38 +42,49 @@ const rushToPurchase =  [
 Mock.mock('takeout/getRushToPurchase','get',rushToPurchase);
 const receiptOrRefuseOrder = ['开发票','拒单赔','食安保'];
 const businessName = ['望京小腰','洗涮涮火锅','汉堡王','测试1号','测试2号','测试3号','测试4号','测试5号','测试6号','测试7号','测试8号','测试9号','测试10号','测试11号'];
-const data = Mock.mock({
-	"ecommendBusiness|20":[
-		{
-			"img|1":imgs,
-			"name|1":businessName,
-			"address": '@CITY',
-
-			"start|3-5":1,
-			"mouthSale|500-20000":1,
-			"averageUsed|20-100":1,
-			"ifonTime":"准时达",
-			"whickSend":"蜂鸟专送",	
-			"startSend|20-40":1,
-			"sendTip|5-30":1,
-			"arriveTime|30-50":1,
-			"distance|1-4":1,
-			"activityConcessions":[
-				{"fullReduce":{
-					"full|20-50":1,
-					"reduce|5-15":1,
-				}
-				},
-				{"discoun |5.5-9.8":1},
-				{"receiptOrRefuseOrder|1":receiptOrRefuseOrder},
-				{"superVip|5.5-7.8":1},
-				{"receiveVipRedBag|10-20":1},
-				{"specilPrice|5-10":1},
-				{"ifbackRedbag|1":[true,false]},
-			],
-		}
-	]
-	});
+const id = 0;
+const dataNum =parseInt(Math.random()*10 + 100);
+const data = function(dataNum){
+	let ecommendBusiness = [];
+	let loadData = [];
+	let obj = {
+		"img|1":imgs,
+		"name|1":businessName,
+		"address": '@CITY',
+		"start|3-5":1,
+		"mouthSale|500-20000":1,
+		"averageUsed|20-100":1,
+		"ifonTime":"准时达",
+		"whickSend":"蜂鸟专送",	
+		"startSend|20-40":1,
+		"sendTip|5-30":1,
+		"arriveTime|30-50":1,
+		"distance|1-4":1,
+		"activityConcessions":[
+			{"fullReduce":{
+				"full|20-50":1,
+				"reduce|5-15":1,
+			}
+			},
+			{"discoun |5.5-9.8":1},
+			{"receiptOrRefuseOrder|1":receiptOrRefuseOrder},
+			{"superVip|5.5-7.8":1},
+			{"receiveVipRedBag|10-20":1},
+			{"specilPrice|5-10":1},
+			{"ifbackRedbag|1":[true,false]},
+		],
+	}
+	for(let i=0;i<dataNum;i++){
+		ecommendBusiness.push(obj)
+	}
+	for(let i = 0;i<5;i++){
+		loadData.push(obj)
+	}
+	return Mock.mock({
+		ecommendBusiness,
+		loadData
+		});
+}
 	//随机生成推荐商家信息
-	Mock.mock('takeout/getBusinessInformation','get',data.ecommendBusiness);
-	
+	Mock.mock('takeout/getBusinessInformation/all','get',data(dataNum).ecommendBusiness);
+	Mock.mock('takeout/getBusinessInformation/load','get',data(dataNum).loadData);

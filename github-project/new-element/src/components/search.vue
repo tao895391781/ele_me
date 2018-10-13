@@ -38,7 +38,7 @@ import {setStorage,getStorage,delStorage} from '../configJs/fengzhuang.js'
 		},
 		watch:{
 			historyS(news){
-				this.history1 =[ ...new Set(news)];
+				this.history1 =[ ...new Set(news) ];
 				setStorage('history1',this.history1);
 
 			},
