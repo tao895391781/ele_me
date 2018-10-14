@@ -2,6 +2,9 @@ const Mocks = require('mockjs');
 
 // import {data} from './data.js'
 const Mock = Mocks;
+Mock.setup({
+    timeout: '200-400'
+})
 const Random = Mocks.Random;
 const imgs = [require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/8.jpg'),require('../static/img/9.jpg'),require('../static/img/10.jpg'),('../static/img/11.jpg'),('../static/img/12.jpg'),('../static/img/13.jpg'),('../static/img/14.jpg')]
 const rushToPurchase =  [
@@ -43,7 +46,7 @@ Mock.mock('takeout/getRushToPurchase','get',rushToPurchase);
 const receiptOrRefuseOrder = ['开发票','拒单赔','食安保'];
 const businessName = ['望京小腰','洗涮涮火锅','汉堡王','测试1号','测试2号','测试3号','测试4号','测试5号','测试6号','测试7号','测试8号','测试9号','测试10号','测试11号'];
 const id = 0;
-const dataNum =parseInt(Math.random()*10 + 100);
+const dataNum =parseInt(Math.random()*10 + 20);
 const data = function(dataNum){
 	let ecommendBusiness = [];
 	let loadData = [];

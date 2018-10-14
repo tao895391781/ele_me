@@ -17,7 +17,6 @@
 							:placeholder='placeholder'
 							v-model="inputText" 
 						>
-					
 					<span ref='texts' 
 							:class="{animationT:animationT,animationT1:animationT1}">
 							<i class="iconfont">&#xe632;</i>&nbsp;
@@ -397,8 +396,10 @@ import {mapActions} from 'vuex'
 			console.log(this.Bscrolls)
 			let that = this;
 			this.Bscrolls.on('pullingDown',function(){
-
 					console.log('下拉刷新');
+					that.index = 8;
+					that.Bscrolls.openPullUp();
+					that.$bus.emit('successRefrewsh');
 					that.getIndexBusinessData({
 						urlargs:'all',
 						index:that.index,
@@ -406,11 +407,11 @@ import {mapActions} from 'vuex'
 						ifupPullLoad:false,
 						self:that,
 						});
-					// that.Bscrolls.finishPullDown()
 				});
 			this.Bscrolls.on('pullingUp',function(){
 					console.log('上拉加载');
 					that.index += 8;
+					that.$bus.emit('upPullLoad');
 					that.getIndexBusinessData({
 						urlargs:'all',
 						index:that.index,
@@ -418,11 +419,11 @@ import {mapActions} from 'vuex'
 						ifupPullLoad:true,
 						self:that
 						});
-					// that.Bscrolls.finishPullUp();
 					});
 			let searchOffsetTop = this.$refs.search.offsetTop;
 			this.Bscrolls.on('scroll',function(pos){
-				that.$bus.emit('downReFresh',pos.y)
+				// console.log(pos.y)
+				that.$bus.emit('downReFresh',pos.y);
 				that.scrollL = -pos.y;
 				if(-pos.y>searchOffsetTop){
 					that.ifOverscroll = true;

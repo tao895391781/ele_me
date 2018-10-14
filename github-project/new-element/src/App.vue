@@ -2,11 +2,12 @@
   <div id="app">
     <!-- 下拉刷新tips -->
     <div class="downRefresh" ref='downRes' v-show='showRefresh'>
-      <i class="iconfont" ref='iconH'>&#xe61f;</i>
+      <i class="iconfont" ref='iconH' v-show='!showRefreshText'>&#xe61f;</i>
       <span v-show='showRefreshText'>刷新成功</span>
     </div>
-    <div class="bottomLoad" v-show='showBottomLoad'>
+    <div class="bottomLoad" ref='upLoad' v-show='showBottomLoad'>
       <i class="iconfont">&#xe652;</i>
+       <span v-show='showloadText'>{{loadText}}</span>
     </div>
     <!-- 中间提示语句 -->
     <div class="mainShadow" v-if='showmainShadow'>
@@ -35,18 +36,18 @@ export default {
       showText1:false,
       showRefresh:false,
       showRefreshText:false,
+      showloadText:false,
       showBottomLoad:false,
+      loadText:'正在加载..',
     }
   },
   methods:{
     del(){
       this.showmainShadow = false;
-      this.$bus.$emit('del');
-      
+      this.$bus.$emit('del');  
     },
     cancleTip1(){
       this.showmainShadow = false;
-
     },
   },
   created(){
@@ -58,36 +59,38 @@ export default {
       this.text1 = text1;
       this.leftT = leftT;
       this.rightT = rightT;
-
     })
   },
   mounted(){   
     let this_ = this;
-    console.log(this.$bus)
-    this.$bus.$on('successRefrewsh',()=>{
+    //关闭下拉刷新，并提示刷新成功
+     this.$bus.$on('hiddenText',(bsc)=>{
       this.showRefreshText = true;
-     
-      setTimeout(()=>{
+      bsc[0].finishPullDown();
+      console.log(bsc)
+      setTimeout(() => {
+        // bs.finishPullDown();
         this_.showRefreshText = false;
-      },500)
+      },20);
     });
-     this.$bus.$on('hiddenText',()=>{
-      this.showRefreshText = false;
+    //开启上拉加载
+     this.$bus.$on('upPullLoad',()=>{
+      this_.showBottomLoad = true;  
     });
+    //关闭上拉加载提示
+     this.$bus.$on('hiddenUpPullLoad',()=>{
+      this_.showBottomLoad = false;  
+    });
+  //监听下拉时刷新标识的显示与隐藏
     this.$bus.$on('downReFresh',(topV)=>{
       if(topV>30){
           this.showRefresh = true
           this.$refs.downRes.style.top = topV + 'px';
       }else{
+         this_.$refs.downRes.style.top = 0;
         this_.showRefresh = false;
       }
     });
-    this.$bus.$on('upPullLoad',()=>{
-      this_.showBottomLoad = true;  
-      setTimeout(()=>{
-        this_.showBottomLoad = false;
-      },500)
-    })
   },
 }
 </script>

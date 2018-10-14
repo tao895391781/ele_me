@@ -9,19 +9,22 @@ export default{
 				.then(res=>{
                     if(payload.bsc){
                         if(!payload.ifupPullLoad){
-                            payload.self.$bus.emit('successRefrewsh');
-                            payload.bsc.finishPullDown(); 
+                            payload.self.$bus.emit('hiddenText',[payload.bsc]);
                         }else{
-                            payload.self.$bus.emit('upPullLoad');
-                            payload.bsc.finishPullUp();
-                        }
-                          
+                            payload.self.$bus.emit('hiddenUpPullLoad');
+               
+                        }       
                     }
+                    console.log(payload.index);
+                    console.log(this.state.indexBusinessData)
                     let loadData = res.data.slice(0,payload.index);
-                    commit('SAVE_INDEXBUSINESSDATA',{data:loadData});
+                    if(this.state.indexBusinessData.length == res.data.length){
+                        console.log('已经到底了，不发请求');
+                        payload.bsc.closePullUp()
+                    }else{
+                       commit('SAVE_INDEXBUSINESSDATA',{data:loadData}); 
+                    }
+                    
 				})
     },
-   
-
-
 }
