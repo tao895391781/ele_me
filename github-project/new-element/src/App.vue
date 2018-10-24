@@ -17,6 +17,11 @@
           <button @click='cancleTip1'>{{rightT}}</button>
         </div>  
     </div>
+    <div class='mask' v-show='showmask' ref='mask' @click='closeMask'>
+    </div>
+    <div class="loading" v-if='showLoadings'>
+      <i class="iconfont">&#xe63e;</i>   
+    </div>
     <router-view></router-view>
   </div>
 </template>
@@ -39,6 +44,9 @@ export default {
       showloadText:false,
       showBottomLoad:false,
       loadText:'正在加载..',
+      showmask:false,
+      showLoadings:false,
+
     }
   },
   methods:{
@@ -48,6 +56,11 @@ export default {
     },
     cancleTip1(){
       this.showmainShadow = false;
+    },
+    // 隐藏首页排序下拉列表
+    closeMask(){
+      this.$bus.emit('showmaks','hidden','sort');
+      this.$bus.emit('showmaks','hidden','sieve');
     },
   },
   created(){
@@ -59,17 +72,31 @@ export default {
       this.text1 = text1;
       this.leftT = leftT;
       this.rightT = rightT;
+    });
+    this.$bus.$on('showmask',(show)=>{
+      if(show == 'show'){
+        this.showmask = true;
+      }else{
+        this.showmask = false;
+      }
+    });
+    this.$bus.$on('showLoading',(show)=>{
+      if(show == 'show'){
+        this.showLoadings = true;
+      }else{
+        this.showLoadings = false;
+      }
     })
   },
   mounted(){   
+    this.$refs.mask.style.height = document.body.clientHeight - 5 * 14 + 'px';
+    this.$refs.mask.style.top = 5 * 14 +30+ 'px';
     let this_ = this;
     //关闭下拉刷新，并提示刷新成功
      this.$bus.$on('hiddenText',(bsc)=>{
       this.showRefreshText = true;
       bsc[0].finishPullDown();
-      console.log(bsc)
       setTimeout(() => {
-        // bs.finishPullDown();
         this_.showRefreshText = false;
       },20);
     });
@@ -87,14 +114,17 @@ export default {
           this.showRefresh = true
           this.$refs.downRes.style.top = topV + 'px';
       }else{
-         this_.$refs.downRes.style.top = 0;
+        this_.$refs.downRes.style.top = 0;
         this_.showRefresh = false;
       }
     });
+    //监听上拉加载时标示饿显示与隐藏
+    this.$bus.$on('upPullLoad',(topV)=>{
+
+    })
   },
 }
 </script>
-
 <style lang='scss'>
 @import 'src/style/minin.scss';
  @keyframes tips{
@@ -116,6 +146,17 @@ export default {
       transform: scale(1);
       opacity: 1;
     }
+ }
+ @keyframes load{
+  0%{
+     transform: scale(.7);
+  }
+  50%{
+      transform: scale(1.2);
+  }
+  100%{
+      transform: scale(.7);
+  }
  }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
@@ -151,6 +192,8 @@ export default {
     bottom: 50px;
     left:0;
     text-align: center;
+    height:40px;
+    line-height: 40px;
     i{
       color: #fff;
       font-size: 20px;
@@ -201,9 +244,51 @@ export default {
         font-size: 1.3rem;
         outline: none;
         border-right:1px solid rgba(158, 158, 158, 0.22);
-
       }
    }
+  }
+  .mask{
+    position: fixed;
+    left:0;
+    top:0;
+    width: 100%;
+    height: auto;
+    z-index: 1020;
+    background: rgba(0,0,0,.8);
+  }
+  .loading{
+    position: fixed;
+    left: 0;
+    top: 0;
+    width:100%;
+    height: 100%;
+    z-index:1099;
+    background: rgba(255,255,255,.1);
+    color:#666;
+    i{
+      color: #2196f3;
+      font-size: 3rem;
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      margin: auto;
+      display:inline-block;
+      width:20px;
+      height:20px;
+      @include animation(load,1s,ease,infinite);
+    }
+    span{
+      position: absolute;
+      top:57%;
+      left:50%;
+      display: inline-block;
+      width:100%;
+      text-align: center;
+      -webkit-transform: translate(-50%,-50%);
+      transform: translate(-50%,-50%);
+    }
   }
   .animationTips{
     @include animation(tips,1s,ease,forwards);

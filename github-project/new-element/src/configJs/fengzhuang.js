@@ -41,4 +41,12 @@ export const pullingDown = (bscroll,fn)=>{
 		fn();
 		bscroll.finishPullDown()
 	});
-}
+};
+//首页人均价格带，计算价格和商家对应的关系
+export const countPriceWithStoreCount = function(minPrice,maxPrice,maxPrice1,countNum){
+	let totalCount = 4399;
+	if(minPrice == 0 && maxPrice == maxPrice1){
+		return totalCount;
+	}
+};
+

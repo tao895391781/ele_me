@@ -65,3 +65,30 @@ export const foodType2 = [
 			id:19
 		}	
 ];
+export const typelistSort = [
+	{
+		type:'综合排序',
+		way:'Integrated',
+	},{
+		type:'好评优先',
+		way:'goodReview',
+	},{
+		type:'销量最高',
+		way:'heightestSell',
+	},{
+		type:'起送价最低',
+		way:'lowestsendTip',
+	},{
+		type:'配送最快',
+		way:'fastSend',
+	},{
+		type:'配送费最低',
+		way:'lowestsendTips',
+	},{
+		type:'人均从低到高',
+		way:'perCapitaLTH',
+	},{
+		type:'人均从高到低',
+		way:'perCapitaHTL',
+	}
+]

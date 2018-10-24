@@ -17,7 +17,7 @@
 	</section>
 </template>
 <script>
-import {setStorage,getStorage,delStorage} from '../configJs/fengzhuang.js'
+import {setStorage,getStorage,delStorage} from '../../configJs/fengzhuang.js'
 	export default{
 		data(){
 			return {

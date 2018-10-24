@@ -4,13 +4,16 @@
 		<div class="routerView" v-if='!showBlank'>
 			<router-view></router-view>
 		</div>
+		<!-- 美观还没进到首页,flex布局 -->
 		<div class='blank' v-if='showBlank'></div>
+		<!-- 首页上拉加载显示加载的样式-->
+		<div class="showUpLoad" v-show='showUpload'></div>
 		<div is='Footer' v-show='showFooter' :class="{footerAnimation:showFooter}"></div>
 	</section>
 </template>
 <script>
-import Footer from '../components/footer.vue'
-import phoneHeader from '../components/phoneHeader.vue'
+import Footer from '../components/index/footer.vue'
+import phoneHeader from '../components/index/phoneHeader.vue'
 
 	export default{
 		data(){
@@ -18,6 +21,7 @@ import phoneHeader from '../components/phoneHeader.vue'
 				bgc:true,
 				headerPhoneC:false,
 				showFooter:true,
+				showUpload:false,
 			}
 		},
 		components:{
@@ -48,6 +52,15 @@ import phoneHeader from '../components/phoneHeader.vue'
 					this.showFooter = false;
 				}		
 			});	
+			this.$bus.$on('showUploadBlank',(show)=>{
+				if(show == 'show'){
+					this.showUpload = true;
+				}else if(show == 'hidden'){
+					this.showUpload = false;
+				}
+				
+			});
+			
 		},
 		mounted(){
 		},
@@ -76,6 +89,11 @@ import phoneHeader from '../components/phoneHeader.vue'
 }
 .blank{
 	flex:1;
+}
+.showUpLoad{
+	width:100%;
+	background-color:transparent;
+	height:40px;
 }
 .footerAnimation{
 	@include animation(footerAnimation,.2s,ease,forwards)

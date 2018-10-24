@@ -25,110 +25,110 @@
 				</p>
 				<span @click='cancle' v-show='!showS1'>取消</span>
 			</header> 
+			<!-- 搜索组件 -->
 			<div class="searchpage" v-show='!showS1' :class="{searchB:!showS1}">
 				<Searchpage :historyS='historyS'></Searchpage>	
 			</div>
 			<div class="Indexmain" v-show='showS1'>
 				<div class="searchNav bgc" >
-					<span v-for='s in searchNav'>{{s}}</span>
+					<span v-for='s in searchNav' :key='s.id'>{{s}}</span>
 				</div>
+				<!-- banner图组件 -->
 				<div is='Banner' class="banner"></div>
 				<div class="mainBlock">
-					<div class="foodView">
-						<div class="mainContainer" ref='mainContainer'>
-							<ul class="foodTypeNav foodTypeBgc1" ref='foodType1'>
-								<li v-for='f in foodType1' >
-									<span ref='food1'></span>
-									<i>{{f.name}}</i>
-								</li>
-							</ul>
-							<ul class="foodTypeNav1 foodTypeNav" ref='foodType2'>
-								<li v-for='f in foodType2'>
-									<span ref='food2'></span>
-									<i>{{f.name}}</i>
-								</li>
-							</ul>	
-						</div>
-					</div>
-					<div class="whichfoodType">
-						<p :class="{ifLeft:!ifRight}"></p>
-						<p :class="{ifLeft:ifRight}"></p>
-					</div>
+					<!-- 食物类型组件 -->
+					<div is='FoodType'></div>
 					<h4>
 						<span><i class="iconfont">&#xe607;</i></span>
 						<span>加入超级会员</span>
 						<span>&nbsp;·&nbsp;每月领20元红包</span>
 						<span>立即开通<i class="iconfont">&#xe62a;</i></span>
 					</h4>
+					<!-- 板块1 -->
+					<div is='Block_one' :fivetypeData = 'fivetypeData'></div>
 					<h5>
 						<span><i class="iconfont">&#xe625;</i></span>
 						<span>饿了么向消费者郑重承诺</span>
 						<span><i class="iconfont">&#xe62a;</i></span>
 					</h5>
-					<div class="fivetype">
-						<div v-for='f in fivetypeData' :class="{beforeTwo:false}" ref='fivetype'>
-							<h5>{{f.descript}}</h5>
-							<p>{{f.name}} ></p>
-							<p>{{f.rush}}</p>
-						</div>	
-					</div>
-					<div class="commendBusiness" ref='business'>
-						<h3>推荐商家</h3>
-						<nav>
-							<ul>
-								<li>综合排序</li>
-								<li>距离最近</li>
-								<li>品质联盟</li>
-								<li>筛选</li>
-							</ul>
-						</nav>
-						<ul class="busiInfo">
-							<li v-for='store in businessInfos'>
-								<div class="left">
-									<img :src="store.img" alt="loading" srcset="">
-								</div>
-								<div class="left">
-									<h3 class="ellipsis">{{store.name}}({{store.address}})</h3>
-									<p>
-										<span class="left"><i class="iconfont">&#xe60b;</i>&nbsp;{{store.start}}</span>
-										<span class="left">月售{{store.mouthSale}}</span>
-										<!-- <span class="left">人均{{store.averageUsed}}</span> -->
-										<span class='right paddingO send'>{{store.whickSend}}</span>
-										<span class='right paddingO'>{{store.ifonTime}}</span>
-									</p>
-									<p>
-										<span class="left noColor">起送￥{{store.startSend}}</span>
-										<span class="left">配送￥{{store.sendTip}}</span>
-										<span class="right">{{store.distance}}km</span>
-										<span class="right">{{store.arriveTime}}分钟</span>	
-									</p>
-									<p>
-										<span></span>
-									</p>
-								</div>
-							</li>
-						</ul>
+					<!-- 商家列表组件 -->
+					<div is='BusinessInfos' 
+						:businessInfos = 'businessInfos' 
+						:Bscrolls = 'Bscrolls' 
+						:sortText = 'sortText'
+						:SieveBscrolls = 'SieveBscrolls'
+						:sieveScrollObj = 'sieveScrollObj'
+						ref="businessDom">
 					</div>
 				</div>	
 			</div>
 		</section>
+		<!-- 固定搜索栏 -->
 		<div v-if='ifOverscroll' 
 			class='fixOverscroll'
 		 	:class="{overScrollFixed:ifOverscroll}">
 			<p @click='search'>
 				<i class="iconfont">&#xe632;</i>&nbsp;
 				输入商家、商品名称
+			</p>				
+		</div>
+		<!-- 固定导航栏 -->
+		<nav class="fixedNav" :class="{overScrollFixed:ifOverscrollNav}" 				v-show='beforeCreatedNav'>
+			<ul class="fixNavUl">
+				<li @click = 'scrollToNav' :class="{selectColor:showSorting}">
+					<span>{{sortText}}</span>
+                    <i class="iconfont" v-show='!sortFlag'>&#xe650;</i>
+					<i class="iconfont" v-show='sortFlag'>&#xec5f;</i>
+                </li>
+				<li>距离最近</li>
+				<li>品质联盟</li>
+				<li class="shaixuan" @click = 'sieveToNav'>
+					筛选1
+					<i class="iconfont">&#xe70b;</i>
+				</li>
+			</ul>
+		</nav>
+		 <!-- 综合排序 -->
+        <ul class="IntegratedSorting" v-show='showSorting'>
+			<li v-for='(type,index) in typelistSort' 
+			:class="{selectColor:index == indexs}" 
+			@click='selectSortType(type,index)'
+			:key='type.id'
+			>{{type.type}}
+			<i class="iconfont" v-show='index == indexs'>&#xe64e;</i>
+			</li>
+        </ul>
+		<!-- 筛选下拉菜单 -->
+		<div class="sieve" v-show='showSieve'>
+			<div is='Sieves' :sieveListData = 'sieveListData' 
+			:showSieve = 'showSieve'></div>
+		</div>	
+		<!-- 筛选选项 -->
+		<div  class="sieveSelects" :class="{overScrollFixed:ifOverscrollSelect}" v-show= 'showsieveSelects'
+		ref = 'sieveSelect'>
+			<ul>
+				<li>开发票1&nbsp;&nbsp;<i class="iconfont">&#xe617;</i></li>
+				<li>品牌商家</li>
+				<li>准时达</li>
+				<li>在线领券</li>
+				<li>在线立减</li>
+			</ul>
+			<p>
+				<button>清空</button>
 			</p>
-						
 		</div>
 	</div>
 </template>
-
+s
 <script>
-import Searchpage from '../../components/search.vue'
-import Banner     from '../../components/banner.vue'
+import Searchpage 	 from '../../components/takeout/search.vue'
+import Banner     	 from '../../components/takeout/banner.vue'
+import FoodType   	 from '../../components/takeout/foodType.vue'
+import Block_one  	 from '../../components/takeout/block_one.vue'
+import BusinessInfos from '../../components/takeout/businessInfo.vue'
+import Sieves        from '../../components/takeout/sieve.vue'
 import {setStorage,getStorage,scrollRequest} from '../../configJs/fengzhuang.js'
-import {foodType1,foodType2} from '../../data.js'
+import {foodType1,foodType2,typelistSort} from '../../data.js'
 import {mapActions} from 'vuex'
 	export default {
 		data(){
@@ -143,29 +143,40 @@ import {mapActions} from 'vuex'
 				animationT1:false,
 				placeholder:'',
 				searchNav:['炸鸡','披萨','面','满30减10起','烧烤','粥','一点点',],
-				foodType1:foodType1,
-				foodType2:foodType2,
-				ifLeft:true,
-				ifRight:true,
 				fivetypeData:[],
 				fixedSearch:false,
 				Bscrolls:{},
+				SieveBscrolls:{},
 				index:8,
 				ifOverscroll:false,
+				ifOverscrollSelect:false,
 				scrollL:0,
 				recordFlag:false,
+				ifOverscrollNav:false,
+				typelistSort:typelistSort,
+				showSorting:false,
+				showSieve:false,
+				sortFlag: false,
+				sieveFlag:false,
+				sortText:'综合排序',
+				indexs:0,
+				showsieveSelects:true,
 			}
 		},
 		methods:{
-			gengxinDom(imgs){
-				console.log(imgs)
-				this.$nextTick(function () {
-					console.log(this.$refs.fivetype);
-					let q = this.$refs.fivetype;
-					for(let i = 0;i<q.length;i++){
-						q[i].style.backgroundImage = `url(${imgs[i]})`;
-					}
-				})
+			...mapActions({
+				getIndexBusinessData:'getIndexBusinessData',
+				getSieveServerListData:'getSieveServerListData',
+				//保存每次上拉加载的个数的索引
+				addpullLoadIndexs:'addpullLoadIndexs',
+			}),
+			selectSortType(type,index){
+				this.sortText = type.type;
+				this.indexs = index;
+				this.$bus.emit('showmaks','hidden','sort');
+				this.$bus.emit('showLoading','show');
+				let args = '?name1=name1&name2=name2';
+				this.getIndexBusinessData({urlargs:args,index:8,ifRedo:true,self:this});
 			},
 			searchs(){
 				let options = {
@@ -182,7 +193,7 @@ import {mapActions} from 'vuex'
 				}	
 			},
 			cancle(){
-				console.log(this.scrollL)
+				this.Bscrolls.enable();
 				this.animation = false;
 				this.animation1 = true;
 				this.animationT = false;
@@ -194,10 +205,11 @@ import {mapActions} from 'vuex'
 				this.disabled = true;
 				this.$refs.input.blur();
 				this.$bus.emit('openBgc','show');	
-				 this.$nextTick(()=>{
-						this.Bscrolls.refresh(); 
-						 this.Bscrolls.scrollTo(0,-this.scrollL);
-					 })
+				this.$nextTick(()=>{
+					this.Bscrolls.refresh(); 
+					this.Bscrolls.scrollTo(0,-this.scrollL);
+					 });
+				this.$bus.emit('showSelect','show');
 			},
 			search(){
 				this.animation = true;
@@ -208,71 +220,9 @@ import {mapActions} from 'vuex'
 				this.placeholder = '输入商家、商品名称';
 				this.$refs.input.focus();
 				this.showS1  = false;	
+				this.Bscrolls.disable();
 				this.$bus.emit('openBgc','hide');
-				// this.Bscrolls.scrollTo(0,1);
-				 this.$nextTick(()=>{
-						// this.Bscrolls.refresh(); 
-					 })
-			},
-			touchShowFoodType(obj){
-				let this_ = this;
-				let pagex1 = 0
-				let pagex2 = 0;
-				let moveL = 0;
-				let pol = 0;	
-				let timer = 0;
-				let timeN = 0;
-				let moveTo = 0;
-				let width = document.body.clientWidth;
-				obj.addEventListener('touchstart',function(e){
-					timeN = 0;
-					pagex1 = event.touches[0].pageX;
-					obj.style.transition = '';
-					obj.style.left == 0+'px' ? this_.ifLeft = true: this_.ifLeft = false;
-					obj.style.left == -width+'px' ? this_.ifRight = true: this_.ifRight = false;
-					timer = setInterval(function(){
-						timeN++;	
-					},500)
-
-				});
-				obj.addEventListener('touchmove',function(e){
-					let touch = event.targetTouches[0];
-						//滑动实时距离
-						moveL = (touch.pageX-pagex1);
-						if(moveL>width){
-							//滑动距离超过屏幕宽度滑动最大距离大约为宽度的一半
-							moveL = width ;
-								}
-							moveTo = .001 * moveL * moveL;
-						//滑动元素在左侧顶部并且向右滑动
-						if(moveL>0 && this_.ifLeft){
-							//在最左侧向右滑
-							obj.style.left = parseInt(moveTo) + 'px';
-						}else if(moveL>0 && !this_.ifLeft){
-							//在最右侧向右滑
-							obj.style.left = parseInt(moveL-width) + 'px';
-						}else if(moveL<0 && !this_.ifRight){
-							//在最右侧向左滑
-							obj.style.left = parseInt(moveL) + 'px';
-						}else if(moveL<0 && this_.ifRight){
-							obj.style.left =  - parseInt(width+moveTo) + 'px';
-						}
-						
-				});
-				obj.addEventListener('touchend',function(e){
-					pagex2 = event.changedTouches[0].pageX;
-					//左边没内容回到原点
-					clearInterval(timer)
-					if(parseInt(moveL)>0){
-						obj.style.left = 0;
-						obj.style.transition = '.5s all ease';
-					}else{
-						obj.style.left = -width + 'px';
-						obj.style.transition = '.5s all ease';
-					}
-					obj.style.left == -width+'px' ? this_.ifRight = true: this_.ifRight = false;
-					//左滑	
-				});
+				this.$bus.emit('showSelect','hidden');
 			},
 			searchScroll(){
 				//首页滚动固定搜索框
@@ -284,20 +234,6 @@ import {mapActions} from 'vuex'
 					this.fixedSearch = false;
 				}
 			},
-			getBusinessInfo(){
-				this.axios.get('takeout/getBusinessInformation'+'/all')
-				.then(res=>{
-					console.log(res.data)
-					this.businessInfos = res.data;	
-				})
-			},
-			getLoadDataBusinessInfo(){
-				this.axios.get('takeout/getBusinessInformation'+'/load')
-				.then(res=>{
-					this.businessInfos = [...this.businessInfos,...res.data];
-					console.log(this.businessInfos)
-				})
-			},
 			getEle(){
 				return this.$refs.wrappers;
 			},
@@ -307,19 +243,45 @@ import {mapActions} from 'vuex'
 				}
 				return arr.slice(0,8);
 			},
-			...mapActions({
-				getIndexBusinessData:'getIndexBusinessData',
-			}),
+			 scrollToNav(){
+				 console.log('点击了几次啊')
+				 this.$bus.emit('showmaks','hidden','sieve');
+				 console.log(this.sortFlag)
+				 if(!this.sortFlag){
+					 console.log(5)
+					this.$bus.emit('showmaks','show','sort');
+				 }else{
+					this.$bus.emit('showmaks','hidden','sort');
+				 };
+			 },
+			 sieveToNav(){
+				if(this.$store.state.indexSieveServerData.length == 0){
+					this.getSieveServerListData();
+				 }
+				this.$bus.emit('showmaks','hidden','sort');
+				if(!this.sieveFlag){
+					console.log(2)
+					this.$bus.emit('showmaks','show','sieve');
+					if(Object.keys(this.sieveScrollObj).length == 0){
+						console.log('第一次')
+						this.$nextTick(()=>{
+							this.$bus.emit('sieveScroll');
+						})	
+					}
+				}else{
+					this.$bus.emit('showmaks','hidden','sieve');
+				}
+			 },	
 		},
 		watch:{
 			'businessInfos':{
 				deep:true,
 				handler:function(newValue,oldValue){
 					console.log(newValue);
-					 this.$nextTick(()=>{
+					this.$nextTick(()=>{
 						this.Bscrolls.refresh(); 
-					 })
-					
+						this.Bscrolls.openPullUp();
+					 })	
 				}	
 			},
 		},
@@ -327,61 +289,56 @@ import {mapActions} from 'vuex'
 			businessInfos(){
 				return this.$store.state.indexBusinessData;
 			},
-			businessAllInfos(){
-				return this.$store.state.indexBusinessData;
+			sieveScrollObj(){
+				return this.$store.state.sieveScrollObj;
+			},
+			beforeCreatedNav(){
+				if(this.$store.state.indexBusinessData.length == 0){
+					return false;
+				}else{
+					return true;
+				}
+			},
+			sieveListData(){
+				return this.$store.state.indexSieveServerData;
+			},
+			pullLoadIndex(){
+				return this.$store.state.pullLoadIndex;
+			},
+			ifAllOrSieve(){
+				return this.$store.state.ifAllOrSieve;
 			},
 		},
 		created(){
-			console.log(this.Message)
+			console.log(this.Message);
+			console.log(this.$store.state);
 			getStorage('history1') ? this.historyS = getStorage('history1') : '';
 			//获取首页店铺信息上面的推荐食品
 			this.axios.get(this.apilist.getRushToPurchase)
 			.then(res=>{
 				console.log(res.data);
 				this.fivetypeData = res.data;
-				let imgs = [];
-				res.data.forEach(v=>{
-					imgs.push(v.img)
-				})
-				this.gengxinDom(imgs);
 			});
 			this.$bus.$on('delHist',()=>{
 				this.historyS = [];
 				 this.Message.success({
          			message:'已清空',
 					duration:1000
-      })
-			})
-			//获取商家店铺
-			this.getIndexBusinessData({urlargs:'all',index:this.index,firstLoad:true});
+     			 })
+			});
+			//获取商家店铺信息
+			console.log(this.$store.state.indexBusinessData);
+			if(this.$store.state.indexBusinessData.length == 0){
+				this.getIndexBusinessData({urlargs:'all',index:this.index,firstLoad:true,self:this});
+			}	
 		},
 		mounted(){
-			let this_ = this;
-			let obj = this.$refs.mainContainer;
-			obj.style.left = 0 +'px';
-			this.touchShowFoodType(obj);
-			let food1 = this.$refs.food1;
-			let food2 = this.$refs.food2;
-			food1.forEach((v,index)=>{
-				if(index<5){
-					v.style.backgroundPosition = -67 * index +'px' +' '+0+'px';
-				}else{
-					v.style.backgroundPosition = -67 * (index-5) +'px' +' '+ (-44+'px');
-				}	
-			})
-			food2.forEach((v,index)=>{
-				if(index<5){
-					v.style.backgroundPosition = -66 * index +'px' +' '+(-88+'px');
-				}else{
-					v.style.backgroundPosition = -66 * (index-5) +'px' +' '+ (-137+'px');
-				}
-				
-			});
 			 this.$nextTick(()=>{
 				console.log('初始化scroll')
 				let obj = {
-					click:true,
+					click:false,
 					disableTouch:false,
+					eventPassthrough:'horizontal',
 					//下拉刷新
 					pullDownRefresh: {
 						threshold: 50,
@@ -396,25 +353,28 @@ import {mapActions} from 'vuex'
 			console.log(this.Bscrolls)
 			let that = this;
 			this.Bscrolls.on('pullingDown',function(){
-					console.log('下拉刷新');
-					that.index = 8;
+					console.log('下拉刷新');	
+					let index = 8;
+					that.addpullLoadIndexs({data:that.pullLoadIndex,type:'reduce'});
 					that.Bscrolls.openPullUp();
 					that.$bus.emit('successRefrewsh');
 					that.getIndexBusinessData({
-						urlargs:'all',
-						index:that.index,
+						urlargs:that.ifAllOrSieve,
+						index:that.pullLoadIndex,
 						bsc: that.Bscrolls,
 						ifupPullLoad:false,
 						self:that,
 						});
 				});
 			this.Bscrolls.on('pullingUp',function(){
+					console.log(that.ifAllOrSieve)
 					console.log('上拉加载');
-					that.index += 8;
+					that.addpullLoadIndexs({data:that.pullLoadIndex,type:'add'});
 					that.$bus.emit('upPullLoad');
+					that.$bus.emit('showUploadBlank','show');
 					that.getIndexBusinessData({
-						urlargs:'all',
-						index:that.index,
+						urlargs:that.ifAllOrSieve,
+						index:that.pullLoadIndex,
 						bsc: that.Bscrolls,
 						ifupPullLoad:true,
 						self:that
@@ -422,23 +382,103 @@ import {mapActions} from 'vuex'
 					});
 			let searchOffsetTop = this.$refs.search.offsetTop;
 			this.Bscrolls.on('scroll',function(pos){
-				// console.log(pos.y)
+				let navTop = that.$refs.businessDom.$refs.nav.offsetTop;
+				let searchH = that.$refs.search.clientHeight;
+				let touchH = navTop - searchH;
 				that.$bus.emit('downReFresh',pos.y);
 				that.scrollL = -pos.y;
-				if(-pos.y>searchOffsetTop){
+				// 搜索栏显示与隐藏
+				if(-pos.y > searchOffsetTop){
 					that.ifOverscroll = true;
 					that.recordFlag = true;
 				}else{
 					that.ifOverscroll = false;
 					that.recordFlag = false;
+				};
+				// 商家导航栏显示与隐藏
+				if(-pos.y > touchH){
+					that.ifOverscrollNav = true;
+					that.ifOverscrollSelect = true;
+				}else{
+					that.ifOverscrollNav = false;	
+					that.ifOverscrollSelect = false;	
+				}
+			});
+			// 点击商家导航排序/筛选
+			this.$bus.$on('showNavSort',(show,sort)=>{
+				if(sort == 'sort'){
+					if(show == 'show'){
+						this.showSorting = true;
+						this.sortFlag = true;
+					}else if(show == 'hidden'){
+						this.showSorting = false;
+						}
+				}else if(sort== 'sieve'){
+					if(show == 'show'){
+						this.showSieve = true;
+						this.sieveFlag = true;
+					}else{
+						this.showSieve = false;
+					}
+				}
+			});
+			this.$bus.$on('showmaks',(show,sort)=>{
+				if(sort == 'sort'){
+					if(show == 'show'){
+						this.$bus.emit('showmask','show');  
+						this.$bus.emit('showNavSort','show','sort');
+						this.$bus.emit('showSelect','hidden');
+						// this.sortFlag = true;
+						this.Bscrolls.disable();
+					}else{
+						this.$bus.emit('showmask','hidden');  
+						this.$bus.emit('showNavSort','hidden','sort');
+							this.$bus.emit('showSelect','show');
+						this.sortFlag = false;
+						this.Bscrolls.enable(); 
+					}
+				}else if(sort == 'sieve'){
+					if(show == 'show'){
+						this.$bus.emit('showmask','show');  
+						this.$bus.emit('showNavSort','show','sieve');
+						this.$bus.emit('showSelect','hidden');
+						console.log(3)
+						this.sieveFlag = true;
+						this.Bscrolls.disable();
+					}else if(show== 'hidden'){
+						console.log(4)
+						this.$bus.emit('showmask','hidden');  
+						this.$bus.emit('showNavSort','hidden','sieve');
+						this.$bus.emit('showSelect','show');
+						this.sieveFlag = false;
+						this.Bscrolls.enable(); 
+					}
+				}	
+			});
+			// 结束
+			this.$bus.$on('showSelect',(show)=>{
+				if(show == 'show'){
+					this.showsieveSelects = true;
+				}else{
+					this.showsieveSelects = false
 				}
 			})
-   		 });
+			});
 			
 		},
 		components:{
+			//搜索页
 			Searchpage,
-			Banner
+			//banner
+			Banner,
+			//可滑动分类食品
+			FoodType,
+			//优惠活动区域
+			Block_one,
+			//餐馆列表
+			BusinessInfos,
+			//筛选列表
+			Sieves,
 		},
 	}
 </script>
@@ -459,6 +499,7 @@ import {mapActions} from 'vuex'
 		background:#fff;
 		text-align: center;
 		line-height: 2.1rem;
+		z-index: 1023;
 		@include borderRadius(2px);
 		p{
 			width:90%;
@@ -469,6 +510,134 @@ import {mapActions} from 'vuex'
 			@include borderRadius(20px);
 		}
 	}
+	.fixedNav,.sieveSelects{
+		position: static;
+		top:2.5rem;
+		left:0;
+		width:100%;
+		z-index: 1021;
+		background-color:#fff;
+		border-bottom: 1px solid #eee;
+		// @include animation(navScroll ,0.5s, ease ,forwards);
+			&>.fixNavUl{
+				width:100%;
+				display:-webkit-flex;
+				display:flex;
+				justify-content: space-around;
+					li{
+						line-height: 2.5rem;
+						height:2.5rem;
+						width: 25%;
+						text-align: center;
+						position: relative;
+						span{
+							width: 4em;
+							display: inline-block;
+							white-space: nowrap;
+							overflow: hidden;
+							text-overflow: ellipsis;
+						}
+                            i{
+								position: absolute;
+								right:0;
+								top:0;
+                                font-size: 1rem;
+                                }
+							}
+					.shaixuan{
+								i{
+									right:1em;
+								}
+							}
+					.selectColor{
+						span{
+							color:#53a3fd;
+						}
+							
+						i{
+							color:#53a3fd
+						}
+					}
+						}
+		}
+		.sieveSelects{
+			top: 5rem;
+			width: 100%;
+			background:rgba(242, 242, 242, 0.95);
+			overflow: hidden;
+			display:-webkit-flex;
+			display: flex;
+			ul{	
+				width:80%;
+				white-space:nowrap;
+				float: left;
+				-webkit-overflow-scrolling: touch;
+				overflow-x:scroll;
+				li{
+					padding:.3rem .6rem;
+					background: #fff;
+					color: #666;
+					margin:.5rem 0;
+					margin-left:.5rem;
+					letter-spacing: 1px;
+					display: inline-block;	
+					font-size: 1rem;
+					border-radius: 2px;
+					i{
+						font-size: 1rem;
+						display: inline-block;
+						width:2em;
+					}
+					&:last-child{
+						margin-right:.5rem;
+					}
+				}
+			}
+			p{	
+				flex:1;
+				background: #f2f2f2;
+				float: left;
+				box-shadow: 0 -2px 2px 2px #eee;
+				button{
+					padding: .3rem 1rem;
+					margin: .5rem 0;
+					border: 1px solid rgba(153, 153, 153, 0.49);
+					background: #f2f2f2;
+					color: rgba(142, 142, 142,1);
+					border-radius: 3px;
+				}	
+			}
+		}
+	.IntegratedSorting,.sieve{
+		position: absolute;
+		top:5rem;
+		left:0;
+		width:100%;
+		z-index: 1022;
+		background-color: #fff;
+		overflow: hidden;
+		@include animation(sortAmimation ,.5s, ease ,forwards);
+		&>li{
+			line-height: 2.7rem;
+			text-align: left;
+			text-indent: 1em;
+			font-size: 1rem;
+			color: #0a0a0a;
+			i{
+				float: right;
+				padding-right: 1rem;
+			}
+		}
+		.selectColor{
+			color: #53a3fd;
+			i{
+			color: #53a3fd;
+			}
+		}
+	}
+	.sieve{
+		@include animation(sieveAmimation ,.5s, ease ,forwards);
+		}
 	.overScrollFixed{
 		position: absolute;
 	}
@@ -501,7 +670,7 @@ import {mapActions} from 'vuex'
 					display: inline-block;
 					@include textEllip();
 					color:#fff;
-					float: left;
+					// float: left;
 				}
 				i{
 					float: left;
@@ -608,61 +777,6 @@ import {mapActions} from 'vuex'
 			}
 			.mainBlock{
 				background: #fff;
-				.foodView{
-					height:10rem;
-					width:100%;
-					position: relative;
-					overflow: hidden;
-					padding-bottom: 11rem;
-					.mainContainer{
-						background: #fff;
-						@include position(absolute,200%,100%,0,0,1);
-						overflow: hidden;
-					.foodTypeNav{
-						height:100%;
-						width:50%;
-						display: flex;
-						justify-content:space-around;
-						flex-wrap:wrap;
-						float: left;
-						margin:.2rem 0;
-						li{
-							width:20%;
-							height:5rem;
-							text-align: center;
-							padding-top: .6rem;
-							span{
-								display: inline-block;
-								height:2.3rem;
-								width:2.3rem;
-								background:#fff url('../../../static/img/foodType.png')  no-repeat;
-							}
-							i{
-								display: inline-block;
-								width:100%;
-								font-size: 1rem;
-								transform:scale(.9);
-										}
-									}
-								}
-							}
-						}
-						.whichfoodType{
-								width:4rem;
-								margin:.5rem auto;
-								height:2px;
-								// background: red;
-								display: flex;
-								justify-content:space-around;
-								p{
-									width:30%;
-									height:2px;
-									background: rgba(213, 213, 213, 0.57);
-								}
-							}	
-							.ifLeft{
-								background: #9e9e9e!important;
-							}
 						&>h4{
 							background: #f0dba2;
 							height: 2.6rem;
@@ -708,117 +822,6 @@ import {mapActions} from 'vuex'
 								}
 							}
 						}
-					.fivetype{
-						width:100%;
-						display:-webkit-flex;
-						display: flex;
-						flex-wrap:wrap;
-						justify-content: space-around;
-						div{
-							width:32%;
-							margin-bottom: .2rem;
-							position: relative;
-							background: transparent;
-							background: #eee;
-							background-size: 100% 100%;
-							h5{
-								padding:.2rem 0;
-								color:#fff;
-								font-size: 1.1rem;
-							}
-							p{
-								padding:.5rem 0;
-								color:#fff;
-							}
-							&:first-child,&:nth-child(2){
-								width:48%;
-							}
-						}
-
-					}
-				.commendBusiness{
-					&>h3{
-						text-align: left;
-						padding:.5rem 1rem;
-					}
-					nav{
-						width:100%;
-						border-bottom: 1px solid #eee;
-						ul{
-							width:100%;
-							display:-webkit-flex;
-							display:flex;
-							justify-content: space-around;
-							li{
-								line-height: 2.5rem;
-								width: 25%;
-								text-align: center;
-							}
-						}
-					}
-					.busiInfo{
-						li{
-							display: -webkit-flex;
-							display: flex;
-							margin:.4rem 0;
-							div{
-								&:first-child{
-									width:6rem;
-									height:6rem;
-									margin:.2rem .3rem;
-									img{
-										width:100%;
-										height:100%;
-									}
-								}
-								&:last-child{
-									flex: 1;
-									padding:.5rem .5rem;
-									border-bottom: 1px solid rgba(238, 238, 238, 0.54);
-									border-top: 1px solid rgba(238, 238, 238, 0.54);
-									h3{
-										text-align: left;
-										color:#000;
-										font-size: 1.2rem;
-									}
-									p{
-										overflow: hidden;
-										line-height: 2rem;
-										span{
-											padding-right:.6rem;
-											font-size: 1rem;
-											color: #9e9e9e;
-											&:first-child{	
-												color:#e04b3a;
-												i{
-													color:#e04b3a;	
-												}
-											}	
-										}
-										.noColor{
-											color:#9e9e9e!important;
-										}
-										.paddingO{
-											padding:0 .2rem;
-											border: 1px solid rgba(3, 169, 244, 0.41);
-											color:#03A9F4;
-											font-size: .1rem;
-											letter-spacing: 1px;
-											line-height: 1.3rem;
-											position: relative;
-											top:.35rem;
-										}
-										.send{
-											background:#2196f3;
-											color:#fff;
-											border-left:none;
-										}
-									}
-								}
-							}
-						}
-					}
-				}
 					}
 				}
 			}
@@ -835,7 +838,6 @@ import {mapActions} from 'vuex'
 			transform: scale(1);
 			width:100;
 			top:2.6rem;
-		
 		}
 		100%{
 			transform: scale(.9);
@@ -871,6 +873,22 @@ import {mapActions} from 'vuex'
 		100%{
 			transform:translateX(0);
 			opacity:1;	
+		}
+	}
+	@keyframes sortAmimation{
+		from{
+			height:0;
+		}
+		to{
+			height:22rem;
+		}
+	}
+	@keyframes sieveAmimation{
+		from{
+			height:0;
+		}
+		to{
+			height:32rem;
 		}
 	}
 </style>

@@ -1,10 +1,10 @@
 <template>
 	<section id="banner">
 		<ul ref='containerImg'>
-			<li v-for='(m,index) in imgs' :indexs='index' ref='oli'><img :src="m" alt=""></li>
+			<li v-for='(m,index) in imgs' :indexs='index' ref='oli' :key='m.id'><img :src="m" alt=""></li>
 		</ul>
 		<p class="whichI" v-show='imgs.length!=1'>
-			<span v-for='(i,index) in imgs' :class="{active:index==m}"></span>
+			<span v-for='(i,index) in imgs' :class="{active:index==m}" :key="i.id"></span>
 		</p>
 	</section>
 </template>
@@ -12,7 +12,7 @@
 	export default {
 		data(){
 			return {
-				imgs:[require('../../static/img/6.jpg'),require('../../static/img/7.jpg'),require('../../static/img/8.jpg'),require('../../static/img/9.jpg'),require('../../static/img/10.jpg')],
+				imgs:[require('../../../static/img/6.jpg'),require('../../../static/img/7.jpg'),require('../../../static/img/8.jpg'),require('../../../static/img/9.jpg'),require('../../../static/img/10.jpg')],
 				indexs:0,
 				m:0,
 				flag:false,
