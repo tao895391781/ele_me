@@ -1,8 +1,8 @@
 <template>
     <div class='block_1'>
-        <h4>{{fivetypeData.title}}</h4>
+        <h4>{{IndexBlockIntroData.title}}</h4>
         <div class="fivetype">
-		    <div v-for='f in fivetypeData.list' :class="{beforeTwo:false}" ref='fivetype'>
+		    <div v-for='f in IndexBlockIntroData.list' :class="{beforeTwo:false}" ref='fivetype'>
 			    <h5>{{f.descript}}</h5>
 			    <p>{{f.name}} ></p>
 			    <p>{{f.rush}}</p>
@@ -16,12 +16,10 @@ export default {
         return {
         }
     },
-    props:['fivetypeData'],
+    props:['IndexBlockIntroData'],
     methods:{
         gengxinDom(imgs){
-				console.log(imgs)
 				this.$nextTick(function () {
-					console.log(this.$refs.fivetype);
 					let q = this.$refs.fivetype;
 					for(let i = 0;i<q.length;i++){
 						q[i].style.backgroundImage = `url(${imgs[i]})`;
@@ -30,8 +28,7 @@ export default {
 			},
     },
     watch:{
-      fivetypeData(newV){
-          console.log(newV);
+      IndexBlockIntroData(newV){
           let imgs = [];
           newV.list.forEach((v)=>{
              imgs.push(v.img);

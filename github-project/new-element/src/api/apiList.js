@@ -1,3 +1,4 @@
+// require('./../mock')
 const apilist = {
     //获取首页五个模块
     getRushToPurchase:'takeout/getRushToPurchase',
@@ -7,7 +8,9 @@ const apilist = {
     getSieveItem:'takeout/getSieveItem/',
     //根据选定的条件筛选出商家数
     getSieveSelectData:'takeout/getSieveSelectData/',
-    getSelectData:'takeout/getBusinessInformation/'
+    getSelectData:'takeout/getBusinessInformation/',
+    //获取商家店铺的具体信息
+    getShopsInfo:'shopsInfo/getShopsInfo/',
 
 }
 module.exports = apilist;

@@ -3,54 +3,39 @@
         <div class="commendBusiness" ref='business'>
 			<h3>推荐商家</h3>
 			<nav ref='nav'>
-				<ul>
-				    <li @click='scrollToNav("sort")'>
-						<span>{{sortText}}</span>
-                        <i class="iconfont" v-show='!showup'>&#xe650;</i>
-                        <i class="iconfont" v-show='showup'>&#xec5f;</i>
-                    </li>
-					<li>距离最近</li>
-				    <li>品质联盟</li>
-					<li class="shaixuan"  @click='scrollToNav("sieve")'>筛选
-						<i class="iconfont">&#xe70b;</i>
-					</li>
-				</ul>
+				<div is='SortNav' 
+					:sortText = 'sortText'
+					:nav = 'nav'
+					:Bscrolls = 'Bscrolls'
+				></div>
 			</nav>
-			<div  class="sieveSelects">
-				<ul>
-					<li>开发票&nbsp;&nbsp;<i class="iconfont">&#xe617;</i></li>
-					<li>品牌商家</li>
-					<li>准时达</li>
-					<li>在线领券</li>
-					<li>在线立减</li>
-				</ul>
-				<p>
-					<button>清空</button>
-				</p>
-		</div>
+				<div is='SieveSelect' :sieveSelectedData = 'sieveSelectedData'></div>
 			<ul class="busiInfo">
-				<li v-for='store in businessInfos'>
+				<li v-for='(store,index) in businessInfos' :key="store.id">
+						<lazy-component class='left'>
+							<img :src="store.img" alt="loading" srcset="" class='mini-cover'  @click="goShopsInfo(store)">
+						</lazy-component>
 					<div class="left">
-						<img :src="store.img" alt="loading" srcset="">
-					</div>
-					<div class="left">
-						<h3 class="ellipsis">{{store.name}}({{store.address}})</h3>
-						    <p>
-							    <span class="left"><i class="iconfont">&#xe60b;</i>&nbsp;{{store.start}}</span>
-						        <span class="left">月售{{store.mouthSale}}</span>
-							    <!-- <span class="left">人均{{store.averageUsed}}</span> -->
-							    <span class='right paddingO send'>{{store.whickSend}}</span>
-							    <span class='right paddingO'>{{store.ifonTime}}</span>
-							</p>
-							<p>
-                                <span class="left noColor">起送￥{{store.startSend}}</span>
-                                <span class="left">配送￥{{store.sendTip}}</span>
-                                <span class="right">{{store.distance}}km</span>
-                                <span class="right">{{store.arriveTime}}分钟</span>	
-							</p>
-							<p>
-								<span></span>
-							</p>
+						<section class="contain"  @click="goShopsInfo(store)">
+							<h3 class="ellipsis">{{store.name}}({{store.address}})</h3>
+								<p>
+									<span class="left"><i class="iconfont">&#xe60b;</i>&nbsp;{{store.star}}</span>
+									<span class="left">月售{{store.mouthSale}}</span>
+									<span class='right paddingO send'>{{store.whickSend}}</span>
+									<span class='right paddingO'>{{store.ifonTime}}</span>
+								</p>
+								<p>
+									<span class="left noColor">起送￥{{store.startSend}}</span>
+									<span class="left">配送￥{{store.sendTip}}</span>
+									<span class="right">{{store.distance}}km</span>
+									<span class="right">{{store.arriveTime}}分钟</span>	
+								</p>
+							</section>
+							<div 
+								is='active-list' 
+								class="active" 
+								:activelistdata = 'store.activityConcessions'>
+							</div>
 					</div>
 				</li>
                 <li class="uppullLoad"></li>
@@ -60,18 +45,29 @@
 </template>
 <script>
 import {mapActions} from 'vuex'
+import SieveSelect   from '../../components/takeout/sieveSelect.vue'
+import SortNav       from '../../components/takeout/sortNav.vue'
 export default {
     data(){
         return {
 			showup:false,
 			showsieveSelects:true,
+			nav:'nav',
+			ifHidden:false,
 		}
     },
-    props:['businessInfos','Bscrolls','SieveBscrolls','sortText','sieveScrollObj'],
+    props:['businessInfos','Bscrolls','SieveBscrolls','sortText','isAmationScroll'],
     methods:{
 		...mapActions({
-			getSieveServerListData:'getSieveServerListData'
+			getSieveServerListData:'getSieveServerListData',
+			delSelectListData:'delSelectListData'
 		}),
+		goShopsInfo(info){
+			if(this.isAmationScroll){
+				console.log(info);
+				this.$router.push({name:'shopsInfo',params:{id:info.shopsId}})
+			}
+		},
         scrollToNav(arg){
 			console.log(1)
             let el = this.$refs.nav;
@@ -88,11 +84,6 @@ export default {
 				this.$bus.emit('showmask','show','sieve');	
 				this.$bus.emit('showNavSort','show','sieve');
 				this.$bus.emit('showSelect','hidden');
-				this.$nextTick(()=>{
-					if(Object.keys(this.sieveScrollObj).length == 0){
-						this.$bus.emit('sieveScroll');
-					}	
-				})
 				
 			}
  		
@@ -101,16 +92,21 @@ export default {
         },
     },
     watch:{
-        Bscrolls(newV){
-            console.log(newV);
-		},
 		'businessInfos':{
 			deep:true,
 			handler:function(newValue){
 				console.log(newValue)
 			},
 		}
-    },
+	},
+	computed:{
+		sieveSelectlist(){
+				return this.$store.state.sieveSelectList;
+			},
+		sieveSelectedData(){
+           		return this.$store.state.sieveSelectedData;
+			},
+	},
     created(){
 		this.$bus.$on('showSelect',(show)=>{
 				if(show == 'show'){
@@ -121,7 +117,41 @@ export default {
 			})
 	},
     mounted(){
-    },
+		
+	},
+	components:{
+		SieveSelect,
+		SortNav,
+		"active-list":{
+			template:`
+				<div :class="{hidden:ifHidden}">
+					<p>
+						<span v-for=" act in activelistdata" :key="act.id" :class="{main:act.main}">{{act.descript}}</span>
+					</p>
+				    <button @click='showActList()'>
+						<i class="iconfont" v-show='!ifHidden'>&#xe60e;</i>
+						<i class="iconfont" v-show='ifHidden'>&#xe60d;</i>
+					</button>
+				</div>
+			`,
+			data(){
+				return {
+					ifHidden:false,
+				}
+			},
+			props:['activelistdata'],
+			methods:{
+				showActList(){
+					if(!this.ifHidden){
+						this.ifHidden = true;
+					}else{
+						this.ifHidden = false;
+					}	
+		},
+			},
+			created(){},
+		},
+	}
 }
 </script>
 <style lang='scss'>
@@ -171,11 +201,15 @@ export default {
 							display: -webkit-flex;
 							display: flex;
 							margin:.4rem 0;
-							div{
+							border-bottom: 1px solid rgba(238, 238, 238, 0.54);
+							border-top: 1px solid rgba(238, 238, 238, 0.54);
+							&>.left{
 								&:first-child{
-									width:6rem;
-									height:6rem;
-									margin:.2rem .3rem;
+									width:5.5rem;
+									height:5.5rem;
+									margin:.5rem .5rem;
+									border-radius: 5px;
+									overflow: hidden;
 									img{
 										width:100%;
 										height:100%;
@@ -184,52 +218,88 @@ export default {
 								&:last-child{
 									flex: 1;
 									padding:.5rem .5rem;
-									border-bottom: 1px solid rgba(238, 238, 238, 0.54);
-									border-top: 1px solid rgba(238, 238, 238, 0.54);
-									h3{
-										text-align: left;
-										color:#000;
-										font-size: 1.2rem;
+									.contain{
+										h3{
+											text-align: left;
+											color:#000;
+											font-size: 1.2rem;
+										}
+										&>p{
+											overflow: hidden;
+											line-height: 2rem;
+											span{
+												padding-right:.6rem;
+												font-size: 1rem;
+												color: #9e9e9e;
+												&:first-child{	
+													color:#e04b3a;
+													i{
+														color:#e04b3a;	
+													}
+												}	
+											}
+											.noColor{
+												color:#9e9e9e!important;
+											}
+											.paddingO{
+												padding:0 .2rem;
+												border: 1px solid rgba(3, 169, 244, 0.41);
+												color:#03A9F4;
+												font-size: .1rem;
+												letter-spacing: 1px;
+												line-height: 1.3rem;
+												position: relative;
+												top:.35rem;
+											}
+											.send{
+												background:#2196f3;
+												color:#fff;
+												border-left:none;
+											}
+										}
 									}
-									p{
+								.active{	
+									width:100%;
+									height:1.4rem;
+									overflow: hidden;
+									&>p{
+										width:90%;
 										overflow: hidden;
-										line-height: 2rem;
+										float: left;
 										span{
-											padding-right:.6rem;
-											font-size: 1rem;
-											color: #9e9e9e;
-											&:first-child{	
-												color:#e04b3a;
-												i{
-													color:#e04b3a;	
-												}
-											}	
-										}
-										.noColor{
-											color:#9e9e9e!important;
-										}
-										.paddingO{
-											padding:0 .2rem;
-											border: 1px solid rgba(3, 169, 244, 0.41);
-											color:#03A9F4;
+											display: block;
+											margin: 0 .4rem .5rem 0;
+											padding:0 .6rem;
+											height:1.4rem;
+											line-height: 1.4rem;
+											border:1px solid #d4cbcb;
+											color:#666;
+											float: left;
+											border-radius:2px;
 											font-size: .1rem;
-											letter-spacing: 1px;
-											line-height: 1.3rem;
-											position: relative;
-											top:.35rem;
+											}
+										.main{
+											border:1px solid rgba(255, 0, 0, 0.35);
+											color:rgba(255, 0, 0, 0.60);
 										}
-										.send{
-											background:#2196f3;
-											color:#fff;
-											border-left:none;
 										}
+									button{
+										width:10%;
+										float: left;
+										height:1.4rem;
+										line-height: 1.4rem;
+										background: transparent;
 									}
+									}
+								.hidden{
+									overflow: visible;
+								}
 								}
 							}
 						}
 					}
 				}
-}
+			}
 
 </style>
 

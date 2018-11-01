@@ -61,6 +61,7 @@ export default {
     closeMask(){
       this.$bus.emit('showmaks','hidden','sort');
       this.$bus.emit('showmaks','hidden','sieve');
+       this.$bus.emit('clearSieve')  
     },
   },
   created(){
@@ -98,7 +99,7 @@ export default {
       bsc[0].finishPullDown();
       setTimeout(() => {
         this_.showRefreshText = false;
-      },20);
+      },50);
     });
     //开启上拉加载
      this.$bus.$on('upPullLoad',()=>{

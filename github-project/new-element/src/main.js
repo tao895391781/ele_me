@@ -9,7 +9,8 @@ import './style/reset.scss'
 import bus from 'vue-bus'
 import axios from'axios'
 import store from './store'
-import ElementUI from 'element-ui';
+import ElementUI from 'element-ui'
+import VueLazyload from 'vue-lazyload'
 import { Message } from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css';
 
@@ -29,6 +30,9 @@ axios.defaults.withCredentials = true;
 Vue.use(bus)
 Vue.use(ElementUI)
 Vue.use(Vuex)
+Vue.use(VueLazyload,{
+  lazyComponent: true
+})
 
 Vue.prototype.axios = axios;
 Vue.prototype.apilist = apilist;

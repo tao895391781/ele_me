@@ -18,8 +18,19 @@
 		methods:{
 			goView(path){
 				this.$router.push({name:path})
+				if(path == 'takeout'){
+					if(Object.keys(this.$store.state.indexScrollObj) != 0){
+						console.log(this.$store.state.indexScrollObj.y);
+						if(this.$store.state.indexScrollObj.y<0){
+							console.log('滚动到首页')
+							this.$store.state.indexScrollObj.scrollBy(0,-this.$store.state.indexScrollObj.y,500);
+						}else if(this.$store.state.indexScrollObj.y == 0){
+							this.$store.state.indexScrollObj.scrollBy(0,50,500);
+							this.$bus.emit('pullDown');
+						}	
+					}	
+				}
 			}
-
 		}
 	}
 </script>

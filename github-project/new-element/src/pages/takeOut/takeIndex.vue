@@ -45,7 +45,7 @@
 						<span>立即开通<i class="iconfont">&#xe62a;</i></span>
 					</h4>
 					<!-- 板块1 -->
-					<div is='Block_one' :fivetypeData = 'fivetypeData'></div>
+					<div is='Block_one' :IndexBlockIntroData = 'IndexBlockIntroData'></div>
 					<h5>
 						<span><i class="iconfont">&#xe625;</i></span>
 						<span>饿了么向消费者郑重承诺</span>
@@ -57,7 +57,7 @@
 						:Bscrolls = 'Bscrolls' 
 						:sortText = 'sortText'
 						:SieveBscrolls = 'SieveBscrolls'
-						:sieveScrollObj = 'sieveScrollObj'
+						:isAmationScroll = 'isAmationScroll'
 						ref="businessDom">
 					</div>
 				</div>	
@@ -73,23 +73,17 @@
 			</p>				
 		</div>
 		<!-- 固定导航栏 -->
-		<nav class="fixedNav" :class="{overScrollFixed:ifOverscrollNav}" 				v-show='beforeCreatedNav'>
-			<ul class="fixNavUl">
-				<li @click = 'scrollToNav' :class="{selectColor:showSorting}">
-					<span>{{sortText}}</span>
-                    <i class="iconfont" v-show='!sortFlag'>&#xe650;</i>
-					<i class="iconfont" v-show='sortFlag'>&#xec5f;</i>
-                </li>
-				<li>距离最近</li>
-				<li>品质联盟</li>
-				<li class="shaixuan" @click = 'sieveToNav'>
-					筛选1
-					<i class="iconfont">&#xe70b;</i>
-				</li>
-			</ul>
+		<nav class="fixedNav" 
+		:class="{overScrollFixed:ifOverscrollNav}" 
+			v-show='beforeCreatedNav'>
+			<div is='SortNav' 
+				:sortText = 'sortText'
+				:nav = 'nav'
+				:Bscrolls = 'Bscrolls'
+				></div>
 		</nav>
 		 <!-- 综合排序 -->
-        <ul class="IntegratedSorting" v-show='showSorting'>
+        <ul class="IntegratedSorting" v-show='sortFlagSign'>
 			<li v-for='(type,index) in typelistSort' 
 			:class="{selectColor:index == indexs}" 
 			@click='selectSortType(type,index)'
@@ -99,27 +93,16 @@
 			</li>
         </ul>
 		<!-- 筛选下拉菜单 -->
-		<div class="sieve" v-show='showSieve'>
-			<div is='Sieves' :sieveListData = 'sieveListData' 
-			:showSieve = 'showSieve'></div>
+		<div class="sieve" v-show='sieveFlagSign' ref='wrappers1'>
+			<div is='Sieves' :sieveListData = 'sieveListData' ></div>
 		</div>	
 		<!-- 筛选选项 -->
 		<div  class="sieveSelects" :class="{overScrollFixed:ifOverscrollSelect}" v-show= 'showsieveSelects'
 		ref = 'sieveSelect'>
-			<ul>
-				<li>开发票1&nbsp;&nbsp;<i class="iconfont">&#xe617;</i></li>
-				<li>品牌商家</li>
-				<li>准时达</li>
-				<li>在线领券</li>
-				<li>在线立减</li>
-			</ul>
-			<p>
-				<button>清空</button>
-			</p>
+		<div is='SieveSelect' :sieveSelectedData = 'sieveSelectedData'></div>
 		</div>
 	</div>
 </template>
-s
 <script>
 import Searchpage 	 from '../../components/takeout/search.vue'
 import Banner     	 from '../../components/takeout/banner.vue'
@@ -127,6 +110,8 @@ import FoodType   	 from '../../components/takeout/foodType.vue'
 import Block_one  	 from '../../components/takeout/block_one.vue'
 import BusinessInfos from '../../components/takeout/businessInfo.vue'
 import Sieves        from '../../components/takeout/sieve.vue'
+import SieveSelect   from '../../components/takeout/sieveSelect.vue'
+import SortNav       from '../../components/takeout/sortNav.vue'
 import {setStorage,getStorage,scrollRequest} from '../../configJs/fengzhuang.js'
 import {foodType1,foodType2,typelistSort} from '../../data.js'
 import {mapActions} from 'vuex'
@@ -154,13 +139,11 @@ import {mapActions} from 'vuex'
 				recordFlag:false,
 				ifOverscrollNav:false,
 				typelistSort:typelistSort,
-				showSorting:false,
-				showSieve:false,
-				sortFlag: false,
-				sieveFlag:false,
 				sortText:'综合排序',
 				indexs:0,
 				showsieveSelects:true,
+				nav:'notNav',
+				isAmationScroll:true,
 			}
 		},
 		methods:{
@@ -169,6 +152,10 @@ import {mapActions} from 'vuex'
 				getSieveServerListData:'getSieveServerListData',
 				//保存每次上拉加载的个数的索引
 				addpullLoadIndexs:'addpullLoadIndexs',
+				delSelectListData:'delSelectListData',
+				changeSortOrSieveStatus:'changeSortOrSieveStatus',
+				saveScrollIndexObj:'saveScrollIndexObj',
+				getIndexBlockIntroData:'getIndexBlockIntroData',
 			}),
 			selectSortType(type,index){
 				this.sortText = type.type;
@@ -210,6 +197,7 @@ import {mapActions} from 'vuex'
 					this.Bscrolls.scrollTo(0,-this.scrollL);
 					 });
 				this.$bus.emit('showSelect','show');
+				this.$bus.emit('showSortNav','show');
 			},
 			search(){
 				this.animation = true;
@@ -223,11 +211,12 @@ import {mapActions} from 'vuex'
 				this.Bscrolls.disable();
 				this.$bus.emit('openBgc','hide');
 				this.$bus.emit('showSelect','hidden');
+				this.$bus.emit('showSortNav','hidden');
 			},
 			searchScroll(){
 				//首页滚动固定搜索框
 				let takeIndexTop = this.$refs.takeIndex.scrollTop;
-				console.log(takeIndexTop)
+				// console.log(takeIndexTop)
 				if(takeIndexTop  >parseInt(2.6 * 14)){
 					this.fixedSearch = true;
 				}else{
@@ -243,54 +232,65 @@ import {mapActions} from 'vuex'
 				}
 				return arr.slice(0,8);
 			},
-			 scrollToNav(){
-				 console.log('点击了几次啊')
-				 this.$bus.emit('showmaks','hidden','sieve');
-				 console.log(this.sortFlag)
-				 if(!this.sortFlag){
-					 console.log(5)
-					this.$bus.emit('showmaks','show','sort');
-				 }else{
-					this.$bus.emit('showmaks','hidden','sort');
-				 };
-			 },
-			 sieveToNav(){
-				if(this.$store.state.indexSieveServerData.length == 0){
-					this.getSieveServerListData();
-				 }
-				this.$bus.emit('showmaks','hidden','sort');
-				if(!this.sieveFlag){
-					console.log(2)
-					this.$bus.emit('showmaks','show','sieve');
-					if(Object.keys(this.sieveScrollObj).length == 0){
-						console.log('第一次')
-						this.$nextTick(()=>{
-							this.$bus.emit('sieveScroll');
-						})	
+			//滚动或者滚动初始值控制导航栏的显示与隐藏
+			scrollOrInitYClt(pos){
+					let searchOffsetTop = this.$refs.search.offsetTop;
+					let navTop = this.$refs.businessDom.$refs.nav.offsetTop;
+					let searchH = this.$refs.search.clientHeight;
+					let touchH = navTop - searchH;
+					this.$bus.emit('downReFresh',pos.y);
+					this.scrollL = -pos.y;
+					// 搜索栏显示与隐藏
+					if(-pos.y > searchOffsetTop){
+						this.ifOverscroll = true;
+						this.recordFlag = true;
+					}else{
+						this.ifOverscroll = false;
+						this.recordFlag = false;
+					};
+					// 商家导航栏显示与隐藏
+					if(-pos.y > touchH){
+						this.ifOverscrollNav = true;
+						this.ifOverscrollSelect = true;
+					}else{
+						this.ifOverscrollNav = false;	
+						this.ifOverscrollSelect = false;	
 					}
-				}else{
-					this.$bus.emit('showmaks','hidden','sieve');
-				}
-			 },	
+			},	
 		},
+		beforeRouteLeave (to, from, next) {
+			sessionStorage.setItem('indexScroll',this.Bscrolls.y);
+		next();
+  		},
 		watch:{
 			'businessInfos':{
 				deep:true,
 				handler:function(newValue,oldValue){
-					console.log(newValue);
+					// console.log(newValue);
 					this.$nextTick(()=>{
 						this.Bscrolls.refresh(); 
 						this.Bscrolls.openPullUp();
+						if(Object.keys(this.$store.state.sieveScrollObj).length != 0){
+                            this.$store.state.sieveScrollObj.refresh();   
+                        }
 					 })	
 				}	
+			},
+			sieveFlagSign(newV){
+				// console.log(newV);
+				if(newV){
+					this.$nextTick(()=>{
+						console.log(this.sieveScrollObj);
+						// this.sieveScrollObj.scrollBy(0,20,500)
+						this.sieveScrollObj.refresh();	
+					})
+				}
+				
 			},
 		},
 		computed:{
 			businessInfos(){
 				return this.$store.state.indexBusinessData;
-			},
-			sieveScrollObj(){
-				return this.$store.state.sieveScrollObj;
 			},
 			beforeCreatedNav(){
 				if(this.$store.state.indexBusinessData.length == 0){
@@ -308,16 +308,35 @@ import {mapActions} from 'vuex'
 			ifAllOrSieve(){
 				return this.$store.state.ifAllOrSieve;
 			},
+			sieveSelectlist(){
+				return this.$store.state.sieveSelectList;
+			},
+			sieveSelectedData(){
+           		return this.$store.state.sieveSelectedData;
+			},
+			//控制排序下拉框的显示隐藏
+			sortFlagSign(){
+				return this.$store.state.sortOrSieveFlag.sortFlagSign;
+			},
+			//控制筛选下拉框的显示隐藏
+			sieveFlagSign(){
+				return this.$store.state.sortOrSieveFlag.sieveFlagSign;
+			},
+			sieveScrollObj(){
+					return this.$store.state.indexScrollObj;		
+			},
+			IndexBlockIntroData(){
+				return this.$store.state.indexBlockIntroData;
+			},
 		},
 		created(){
-			console.log(this.Message);
-			console.log(this.$store.state);
 			getStorage('history1') ? this.historyS = getStorage('history1') : '';
 			//获取首页店铺信息上面的推荐食品
 			this.axios.get(this.apilist.getRushToPurchase)
 			.then(res=>{
 				console.log(res.data);
 				this.fivetypeData = res.data;
+				this.getIndexBlockIntroData({data:res.data})
 			});
 			this.$bus.$on('delHist',()=>{
 				this.historyS = [];
@@ -327,14 +346,12 @@ import {mapActions} from 'vuex'
      			 })
 			});
 			//获取商家店铺信息
-			console.log(this.$store.state.indexBusinessData);
 			if(this.$store.state.indexBusinessData.length == 0){
 				this.getIndexBusinessData({urlargs:'all',index:this.index,firstLoad:true,self:this});
 			}	
 		},
 		mounted(){
 			 this.$nextTick(()=>{
-				console.log('初始化scroll')
 				let obj = {
 					click:false,
 					disableTouch:false,
@@ -350,9 +367,15 @@ import {mapActions} from 'vuex'
 							}
 						};
 			this.Bscrolls =  new this.Bscroll(this.getEle(),obj);
-			console.log(this.Bscrolls)
+			if(Object.keys(this.$store.state.indexScrollObj).length!=0){
+				this.Bscrolls.refresh()
+				this.Bscrolls.scrollTo(0,parseInt(sessionStorage.getItem('indexScroll')),0);
+			}
+		
+			this.scrollOrInitYClt(this.Bscrolls);
+			this.saveScrollIndexObj({data:this.Bscrolls})
 			let that = this;
-			this.Bscrolls.on('pullingDown',function(){
+			this.$bus.$on('pullDown',()=>{
 					console.log('下拉刷新');	
 					let index = 8;
 					that.addpullLoadIndexs({data:that.pullLoadIndex,type:'reduce'});
@@ -365,9 +388,11 @@ import {mapActions} from 'vuex'
 						ifupPullLoad:false,
 						self:that,
 						});
+			})
+			this.Bscrolls.on('pullingDown',function(){
+					that.$bus.emit('pullDown')
 				});
 			this.Bscrolls.on('pullingUp',function(){
-					console.log(that.ifAllOrSieve)
 					console.log('上拉加载');
 					that.addpullLoadIndexs({data:that.pullLoadIndex,type:'add'});
 					that.$bus.emit('upPullLoad');
@@ -380,77 +405,48 @@ import {mapActions} from 'vuex'
 						self:that
 						});
 					});
-			let searchOffsetTop = this.$refs.search.offsetTop;
 			this.Bscrolls.on('scroll',function(pos){
-				let navTop = that.$refs.businessDom.$refs.nav.offsetTop;
-				let searchH = that.$refs.search.clientHeight;
-				let touchH = navTop - searchH;
-				that.$bus.emit('downReFresh',pos.y);
-				that.scrollL = -pos.y;
-				// 搜索栏显示与隐藏
-				if(-pos.y > searchOffsetTop){
-					that.ifOverscroll = true;
-					that.recordFlag = true;
-				}else{
-					that.ifOverscroll = false;
-					that.recordFlag = false;
-				};
-				// 商家导航栏显示与隐藏
-				if(-pos.y > touchH){
-					that.ifOverscrollNav = true;
-					that.ifOverscrollSelect = true;
-				}else{
-					that.ifOverscrollNav = false;	
-					that.ifOverscrollSelect = false;	
+				// console.log(this.y)
+				//判断是否处于滚动状态(解决滚动停止时，如果结束时点击了点击事件会触发点击事件)
+				that.isAmationScroll = !this.isInTransition;
+				if(that.$refs.businessDom){
+					that.scrollOrInitYClt(pos)
 				}
 			});
-			// 点击商家导航排序/筛选
-			this.$bus.$on('showNavSort',(show,sort)=>{
-				if(sort == 'sort'){
-					if(show == 'show'){
-						this.showSorting = true;
-						this.sortFlag = true;
-					}else if(show == 'hidden'){
-						this.showSorting = false;
-						}
-				}else if(sort== 'sieve'){
-					if(show == 'show'){
-						this.showSieve = true;
-						this.sieveFlag = true;
-					}else{
-						this.showSieve = false;
-					}
-				}
+			this.Bscrolls.on('scrollEnd',function(){
+				setTimeout(function(){
+					that.isAmationScroll = !this.isInTransition;
+				}.bind(this),500)
+				
 			});
 			this.$bus.$on('showmaks',(show,sort)=>{
 				if(sort == 'sort'){
 					if(show == 'show'){
 						this.$bus.emit('showmask','show');  
-						this.$bus.emit('showNavSort','show','sort');
 						this.$bus.emit('showSelect','hidden');
-						// this.sortFlag = true;
+						this.changeSortOrSieveStatus(
+							{data:{sortFlagSign:true,sieveFlagSign:false}})
 						this.Bscrolls.disable();
 					}else{
 						this.$bus.emit('showmask','hidden');  
-						this.$bus.emit('showNavSort','hidden','sort');
-							this.$bus.emit('showSelect','show');
-						this.sortFlag = false;
+						this.changeSortOrSieveStatus(
+							{data:{sortFlagSign:false,sieveFlagSign:false}})
+						this.$bus.emit('showSelect','show');
 						this.Bscrolls.enable(); 
 					}
 				}else if(sort == 'sieve'){
 					if(show == 'show'){
 						this.$bus.emit('showmask','show');  
-						this.$bus.emit('showNavSort','show','sieve');
+						this.changeSortOrSieveStatus(
+							{data:{sortFlagSign:false,sieveFlagSign:true}})
 						this.$bus.emit('showSelect','hidden');
-						console.log(3)
-						this.sieveFlag = true;
 						this.Bscrolls.disable();
+						this.$store.state.sieveSelectedData.length == 0 ?this.getSieveServerListData():'';
 					}else if(show== 'hidden'){
-						console.log(4)
 						this.$bus.emit('showmask','hidden');  
-						this.$bus.emit('showNavSort','hidden','sieve');
+						this.changeSortOrSieveStatus(
+							{data:{sortFlagSign:false,sieveFlagSign:false}})
 						this.$bus.emit('showSelect','show');
-						this.sieveFlag = false;
 						this.Bscrolls.enable(); 
 					}
 				}	
@@ -479,6 +475,10 @@ import {mapActions} from 'vuex'
 			BusinessInfos,
 			//筛选列表
 			Sieves,
+			//筛选的选项
+			SieveSelect,
+			//排序导航栏
+			SortNav,
 		},
 	}
 </script>
@@ -519,94 +519,10 @@ import {mapActions} from 'vuex'
 		background-color:#fff;
 		border-bottom: 1px solid #eee;
 		// @include animation(navScroll ,0.5s, ease ,forwards);
-			&>.fixNavUl{
-				width:100%;
-				display:-webkit-flex;
-				display:flex;
-				justify-content: space-around;
-					li{
-						line-height: 2.5rem;
-						height:2.5rem;
-						width: 25%;
-						text-align: center;
-						position: relative;
-						span{
-							width: 4em;
-							display: inline-block;
-							white-space: nowrap;
-							overflow: hidden;
-							text-overflow: ellipsis;
-						}
-                            i{
-								position: absolute;
-								right:0;
-								top:0;
-                                font-size: 1rem;
-                                }
-							}
-					.shaixuan{
-								i{
-									right:1em;
-								}
-							}
-					.selectColor{
-						span{
-							color:#53a3fd;
-						}
-							
-						i{
-							color:#53a3fd
-						}
-					}
-						}
+		
 		}
 		.sieveSelects{
 			top: 5rem;
-			width: 100%;
-			background:rgba(242, 242, 242, 0.95);
-			overflow: hidden;
-			display:-webkit-flex;
-			display: flex;
-			ul{	
-				width:80%;
-				white-space:nowrap;
-				float: left;
-				-webkit-overflow-scrolling: touch;
-				overflow-x:scroll;
-				li{
-					padding:.3rem .6rem;
-					background: #fff;
-					color: #666;
-					margin:.5rem 0;
-					margin-left:.5rem;
-					letter-spacing: 1px;
-					display: inline-block;	
-					font-size: 1rem;
-					border-radius: 2px;
-					i{
-						font-size: 1rem;
-						display: inline-block;
-						width:2em;
-					}
-					&:last-child{
-						margin-right:.5rem;
-					}
-				}
-			}
-			p{	
-				flex:1;
-				background: #f2f2f2;
-				float: left;
-				box-shadow: 0 -2px 2px 2px #eee;
-				button{
-					padding: .3rem 1rem;
-					margin: .5rem 0;
-					border: 1px solid rgba(153, 153, 153, 0.49);
-					background: #f2f2f2;
-					color: rgba(142, 142, 142,1);
-					border-radius: 3px;
-				}	
-			}
 		}
 	.IntegratedSorting,.sieve{
 		position: absolute;
@@ -616,6 +532,7 @@ import {mapActions} from 'vuex'
 		z-index: 1022;
 		background-color: #fff;
 		overflow: hidden;
+		height:0;
 		@include animation(sortAmimation ,.5s, ease ,forwards);
 		&>li{
 			line-height: 2.7rem;

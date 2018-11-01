@@ -1,12 +1,10 @@
 const Mocks = require('mockjs');
 import apilist  from './api/apiList'
-
-// import {data} from './data.js'
 const Mock = Mocks;
+const Random = Mock.Random;
 Mock.setup({
-    timeout: 1000
+    timeout: 400
 })
-const Random = Mocks.Random;
 const imgs = [require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/6.jpg'),require('../static/img/8.jpg'),require('../static/img/9.jpg'),require('../static/img/10.jpg'),('../static/img/11.jpg'),('../static/img/12.jpg'),('../static/img/13.jpg'),('../static/img/14.jpg')]
 const rushToPurchase =  {
 	title:'找优惠',
@@ -61,8 +59,11 @@ const data = function(dataNum){
 	let obj = {
 		"img|1":imgs,
 		"name|1":businessName,
+		"shopsId":0,
+		"color": '@COLOR',
 		"address": '@CITY',
-		"start|3-5":1,
+		"shopLogo":'@IMG(200x200,#f2f2f2,商家名字)',
+		"star|3-5":1,
 		"mouthSale|500-20000":1,
 		"averageUsed|20-100":1,
 		"ifonTime":"准时达",
@@ -72,17 +73,66 @@ const data = function(dataNum){
 		"arriveTime|30-50":1,
 		"distance|1-4":1,
 		"activityConcessions":[
-			{"fullReduce":{
-				"full|20-50":1,
-				"reduce|5-15":1,
-			}
+			{
+				"title":"满减",
+				"scope":"fullReduce_1",
+				"descript":"20减10",
+				"main":true	
 			},
-			{"discoun |5.5-9.8":1},
-			{"receiptOrRefuseOrder|1":receiptOrRefuseOrder},
-			{"superVip|5.5-7.8":1},
-			{"receiveVipRedBag|10-20":1},
-			{"specilPrice|5-10":1},
-			{"ifbackRedbag|1":[true,false]},
+			{
+				"title":"满减",
+				"scope":"fullReduce_2",
+				"descript":"100减30",
+				"main":true	
+			},
+			{
+				"title":"满减",
+				"scope":"fullReduce_2",
+				"descript":"200减50",
+				"main":true	
+			},
+			{
+				"title":"折扣",
+				"scope":"discount",
+				"descript":"5.5折",
+				"main":true	
+			},
+			{
+				"title":"食安保",
+				"scope":"foodSafe",
+				"descript":"食安保",
+				"main":false	
+			},
+			{
+				"title":"超级会员6.2折",
+				"scope":"superVip",
+				"descript":"超级会员6.2折",
+				"main":true	
+			},
+			{
+				"title":"88元特价",
+				"scope":"specialPrice",
+				"descript":"88元特价",	
+				"main":true	
+			},
+			{
+				"title":"返红包",
+				"scope":"ifBackRedpage",
+				"descript":"返红包",	
+				"main":true	
+			},
+			{
+				"title":"0元配送",
+				"scope":"zeroSend",
+				"descript":"0元配送",	
+				"main":false
+			},
+			{
+				"title":"开发票",
+				"scope":"drawBill",
+				"descript":"开发票",
+				"main":false	
+			}
 		],
 	}
 	//随机生成筛选选项数据
@@ -181,8 +231,17 @@ const data = function(dataNum){
 		selectData,
 		});
 };
+
+	function shopsId(arr){
+		if(arr.length == 0) return;
+		arr.forEach((v,index)=>{
+				v.shopsId = index;
+		});
+		return arr;
+	};
+	let ecommendBusiness = shopsId(data(dataNum).ecommendBusiness);
 	//随机生成推荐商家信息
-	Mock.mock(apilist.getBusinessInformation +'all','get',data(dataNum).ecommendBusiness);
+	Mock.mock(apilist.getBusinessInformation +'all','get',ecommendBusiness);
 	Mock.mock(apilist.getBusinessInformation +'load','get',data(dataNum).loadData);
 	//选中选项筛选出的结果
 	Mock.mock(apilist.getSelectData +'?name1=name1&name2=name2','get',data(dataNum1).selectData)
@@ -190,5 +249,10 @@ const data = function(dataNum){
 	Mock.mock(apilist.getSieveItem,'get',data().obj1);
 	//根据选定的条件筛选出商家数
 	Mock.mock(apilist.getSieveSelectData,'get',data().obj2);
+	//根据shopsId进入商家店铺获取信息
+	let infoData = ecommendBusiness;
+	for(let i = 0;i<infoData.length;i++){
+		Mock.mock(apilist.getShopsInfo + infoData[i].shopsId,'get',infoData[i])
+	}
 	
 	
